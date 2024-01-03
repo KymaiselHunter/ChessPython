@@ -9,8 +9,16 @@ testBoard = Chessboard()
 #testBoard.testSet()
 #removed, must make new function that will add a piece to the board, then test it using its other functions
 
-testBoard.displayBoard()
+#testBoard.displayBoard()
 
 #testing clearing the board
-testBoard.clearBoard()
-testBoard.displayBoard()
+#testBoard.clearBoard()
+#testBoard.displayBoard()
+
+#testing the defualt creation
+testBoard.setUpChessBoard()
+testBoard.printBoard()
+
+testBoard.updateVisionAll()
+
+testBoard.printTeamVision(True)

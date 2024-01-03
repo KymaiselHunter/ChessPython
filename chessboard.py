@@ -222,14 +222,15 @@ class Chessboard:
             print("Black Pieces")
 
         for piece in team:
-            self.printPieceVision(piece)
+            piece.printVision()
         
         print("-End-")
 
+    #[REMOVED AND PUT INTO CHESS PIECE CLASS]
     #param: piece that will be printed with it's vision
     #post: prints the vision of a specific piece
-    def printPieceVision(self, pChessPiece):
-        print(type(pChessPiece), pChessPiece.getSquareLocation(), pChessPiece.getVisionLocations(), "\n")
+    #def printPieceVision(self, pChessPiece):
+    #    print(type(pChessPiece), pChessPiece.getSquareLocation(), pChessPiece.getVisionLocations(), "\n")
 
     #helper for getting visions
     #param: rank

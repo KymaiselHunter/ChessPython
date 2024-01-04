@@ -22,3 +22,4 @@ testBoard.printBoard()
 testBoard.updateVisionAll()
 
 testBoard.printTeamVision(True)
+testBoard.printTeamVision(False)

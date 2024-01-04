@@ -649,8 +649,6 @@ class Chessboard:
         
         #only the pawn has special needs, so if it's a pawn, take care of it differently, but everything else can use the same validation
         if isinstance(pChessPiece, Pawn):
-            pChessPiece.printVision()
-            
             #lets check the squares u can attack first since that will be similar to the for loop in the other one
             for visionSquare in pChessPiece.getVision():
                 #quick skip to next iteration if the square in it's vision has an friendly piece or none at all
@@ -677,18 +675,11 @@ class Chessboard:
             pChessPiece.addSquareToValidMoves(nextSquare)    
 
             #now for the jump square
-            if pChessPiece.getMoveCount() != 0 or not jumpSquare or jumpSquare.hasChessPiece():
+            if pChessPiece.getMoveCount() > 0 or not jumpSquare or jumpSquare.hasChessPiece():
                 return    
 
             if futureBoard.validatePossibleMove(nextSquare, jumpSquare):
                 pChessPiece.addSquareToValidMoves(jumpSquare)    
-
-
-
-                
-
-            
-
         else:
             for visionSquare in pChessPiece.getVision():
                 #quick skip to next iteration if the square in it's vision has an friendly piece
@@ -702,13 +693,7 @@ class Chessboard:
 
         return True
 
-    """    
-    #param: the ROOK that will be updated
-    #post: update the valid moves for specifically ROOKS
-    def updateValidRook(self, pRook):
-    for squares in pRook.getVision():
-    print("STUB")
-    """
+
 
     """
     #DO NOT USE FOR MOVING PIECES, ONLY SUPPOSE TO BE USED TO CALCULATE POSSIBLE MOVES
@@ -736,5 +721,87 @@ class Chessboard:
         movedPiece.setSquare(newSquare)
         newSquare.setChessPiece(movedPiece)
 
+        self.updateVisionAll()
+
         return not self.isTeamInCheck(movedPiece.getPieceAllegiance())
+    
+    #============================================================================================
+    # Handeling the gameplay
+    #============================================================================================
+
+    #setup a board, then starts the game loop
+    def playGameText(self):
+        self.setUpChessBoard()
+        self.updateVisionAll()
+
+        play = True
+
+        while play:
+            self.updateValidMovesTeam(self._homeTurn)
+            print("White to Play" if self._homeTurn else "Black to Play")
+            self.printBoard()
+            self.printTeamValidMoves(self._homeTurn)
+            self.getPlayerMoveText()
+
+            self._homeTurn = not self._homeTurn
+
+            self.addToHistory()
+            print("success?")
+
+        #testBoard.printTeamVision(True)
+        #testBoard.printTeamValidMoves(True)
+        #testBoard.printTeamVision(False)
+        #testBoard.printTeamValidMoves(False)
+            
+    def getPlayerMoveText(self):
+        #input command in the form
+        #square 'to'
+        print("Give first square")
+        firstSquare = input()
+
+        print("Give second square")
+        secondSquare = input()
+
+        letterToFile = {'A' : 7, 'B' : 6, 'C' : 5, 'D' : 4, 'E' : 3, 'F' : 2, 'G' : 1, 'H' : 0} 
+
+        firstSquare = self._matrix[int(firstSquare[1])-1][letterToFile[firstSquare[0]]]
+        secondSquare = self._matrix[int(secondSquare[1])-1][letterToFile[secondSquare[0]]]
+
+        #print(firstSquare.getRank(), firstSquare.getFile())
+
+        #firstSquare.getChessPiece().printValidMoves()
+        #print(not firstSquare.hasChessPiece(), firstSquare.getChessPiece().getPieceAllegiance() != self._homeTurn, not secondSquare in firstSquare.getChessPiece().getValidMoves())
+        while not firstSquare.hasChessPiece() or firstSquare.getChessPiece().getPieceAllegiance() != self._homeTurn or not secondSquare in firstSquare.getChessPiece().getValidMoves():
+            print("Invalid Input")
+            print("Give first square")
+            firstSquare = input()
+
+            print("Give second square")
+            secondSquare = input()
+
+            firstSquare = self._matrix[int(firstSquare[1])-1][letterToFile[firstSquare[0]]]
+            secondSquare = self._matrix[int(secondSquare[1])-1][letterToFile[secondSquare[0]]]
+
+        print(firstSquare.getRank(), firstSquare.getFile(), firstSquare.hasChessPiece())
+        self.playerMove(firstSquare, secondSquare)
+
+    #param: old square
+    #param: new square
+    def playerMove(self, pOldSquare, pNewSquare):
+        movedPiece = pOldSquare.getChessPiece()
+
+        pOldSquare.removeChessPiece()
+
+        self.removePieceFromChessBoard(pNewSquare)
+
+        movedPiece.setSquare(pNewSquare)
+        pNewSquare.setChessPiece(movedPiece)
+
+        movedPiece.increaseMoveCount()
+
+        self.updateVisionAll()
+
+
+
+
 

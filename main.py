@@ -6,17 +6,19 @@ print("Hello World")
 #testing display + adding a random thingy
 testBoard = Chessboard()
 
+testBoard.playGameText()
+
 #testBoard.testSet()
 #removed, must make new function that will add a piece to the board, then test it using its other functions
 
 #testBoard.displayBoard()
 
-#testing clearing the board
+#testing clearing the boardD2
 #testBoard.clearBoard()
 #testBoard.displayBoard()
 
 #testing the defualt creation
-testBoard.setUpChessBoard()
+"""testBoard.setUpChessBoard()
 testBoard.updateVisionAll()
 
 testBoard.updateValidMovesTeam(True)
@@ -29,7 +31,7 @@ testBoard.printTeamVision(True)
 testBoard.printTeamValidMoves(True)
 testBoard.printTeamVision(False)
 testBoard.printTeamValidMoves(False)
-
+"""
 
 """
 testBoard.testFunc3()

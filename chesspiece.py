@@ -61,6 +61,9 @@ class Chesspiece:
     def setSquare(self, pSquare):
         self._square = pSquare
 
+    def increaseMoveCount(self):
+        self._moveCount += 1
+
     #==============================================
     #vision setters and getters
     #==============================================
@@ -107,6 +110,10 @@ class Chesspiece:
     #post: add a square to the validMoves
     def addSquareToValidMoves(self, pSquare):
         self._validMoves.append(pSquare)
+
+    #return: the list of valid moves this chess piece can make
+    def getValidMoves(self):
+        return self._validMoves
 
     #==============================================
     #prints

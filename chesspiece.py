@@ -144,7 +144,7 @@ class Pawn(Chesspiece):
 
     #return next square member variable
     def getNextSquare(self):
-        return self.nextSquare
+        return self._nextSquare
     
     #param: reference to the square will move in front to
     def setNextSquare(self, pSquare):
@@ -152,7 +152,7 @@ class Pawn(Chesspiece):
 
     #return jump square member variable
     def getJumpSquare(self):
-        return self.nextSquare
+        return self._jumpSquare
     
     #param: reference to the square that the piece can jump to
     def setJumpSquare(self, pSquare):

@@ -649,10 +649,47 @@ class Chessboard:
         
         #only the pawn has special needs, so if it's a pawn, take care of it differently, but everything else can use the same validation
         if isinstance(pChessPiece, Pawn):
-            print("STUB")
-        else:
             pChessPiece.printVision()
+            
+            #lets check the squares u can attack first since that will be similar to the for loop in the other one
+            for visionSquare in pChessPiece.getVision():
+                #quick skip to next iteration if the square in it's vision has an friendly piece or none at all
+                if not visionSquare.hasChessPiece() or visionSquare.getChessPiece().getPieceAllegiance() == pChessPiece.getPieceAllegiance():
+                    continue
 
+                futureBoard = Chessboard(copy.deepcopy(self._boardHistory[-1]))
+                if futureBoard.validatePossibleMove(pChessPiece.getSquare(), visionSquare):
+                    pChessPiece.addSquareToValidMoves(visionSquare)
+
+            #now lets check the none attacking sqaures and just the push forward ones
+            #if the chesspiece has a square in front of it and there is no piece there, then we may validate
+            nextSquare = pChessPiece.getNextSquare()
+            jumpSquare = pChessPiece.getJumpSquare()
+
+            #quick exits cuz without them, the nesting gets disgusting
+            if not nextSquare or nextSquare.hasChessPiece():
+                return
+
+            futureBoard = Chessboard(copy.deepcopy(self._boardHistory[-1]))
+            if not futureBoard.validatePossibleMove(pChessPiece.getSquare(), nextSquare):
+                return
+
+            pChessPiece.addSquareToValidMoves(nextSquare)    
+
+            #now for the jump square
+            if pChessPiece.getMoveCount() != 0 or not jumpSquare or jumpSquare.hasChessPiece():
+                return    
+
+            if futureBoard.validatePossibleMove(nextSquare, jumpSquare):
+                pChessPiece.addSquareToValidMoves(jumpSquare)    
+
+
+
+                
+
+            
+
+        else:
             for visionSquare in pChessPiece.getVision():
                 #quick skip to next iteration if the square in it's vision has an friendly piece
                 if visionSquare.hasChessPiece() and visionSquare.getChessPiece().getPieceAllegiance() == pChessPiece.getPieceAllegiance():
@@ -665,18 +702,27 @@ class Chessboard:
 
         return True
 
+    """    
     #param: the ROOK that will be updated
     #post: update the valid moves for specifically ROOKS
     def updateValidRook(self, pRook):
-        for squares in pRook.getVision():
-            print("STUB")
+    for squares in pRook.getVision():
+    print("STUB")
+    """
 
+    """
     #DO NOT USE FOR MOVING PIECES, ONLY SUPPOSE TO BE USED TO CALCULATE POSSIBLE MOVES
     #IN OOP, THIS WOULD BE A PRIVATE FUNCTION
-    #param: square the piece is on
-    #param: it's new square
-    #post: makes the old square have no chesspiece, removes the piece on the new square from the game, 
-    #pChesspiece now linked to new square
+    #param: 
+        square the piece is on
+    #param: 
+        it's new square
+    #post: 
+        makes the old square have no chesspiece, removes the piece on the new square from the game, 
+        pChesspiece now linked to new square
+    #return: 
+        if the move is valid or not, aka, does it keep it out of check or not
+    """
     def validatePossibleMove(self, pOldSquare, pNewSquare):
         newSquare = self._matrix[pNewSquare.getRank()][pNewSquare.getFile()]
         oldSquare = self._matrix[pOldSquare.getRank()][pOldSquare.getFile()]

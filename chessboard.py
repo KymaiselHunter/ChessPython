@@ -81,6 +81,14 @@ class Team:
     def inCheck(self):
         return self._check
     
+    #return: the amount of valid squares a team has
+    def getAmountOfValidMoves(self):
+        count = 0
+        for piece in self._pieceList:
+            count += piece.getAmountOfValidMoves()
+
+        return count
+    
     #setters
     #post: set the _check variable equal to pCheck
     def setCheck(self, pCheck):
@@ -103,23 +111,33 @@ class Team:
 #============================================================================================
 class Chessboard:
     #create an empty chessboard(matrix of 8x8 empty sqaures )
-    def __init__(self):
-        #matrix of the board itself
-        self._matrix = [[Square(j,i) for i in range(8) ]  for j in range(8)]
+    def __init__(self, *args):
+        if len(args) == 0: 
+            #matrix of the board itself
+            self._matrix = [[Square(j,i) for i in range(8) ]  for j in range(8)]
 
-        #boolean to keep track of whose turn
-        self._homeTurn = True
+            #boolean to keep track of whose turn
+            self._homeTurn = True
 
-        #list of pieces for each team
-        self._homeTeam = Team()
-        self._vistorTeam = Team()
+            #list of pieces for each team
+            self._homeTeam = Team()
+            self._vistorTeam = Team()
 
-        #member variable that acts as a queue for version control
-        #the board history, when adding a list into it, it should contain 4 things
-        #  0        1           2           3
-        # matrix    homeTurn     HomeTeam    visitor team
-        self._boardHistory = []
-        
+            #member variable that acts as a queue for version control
+            #the board history, when adding a list into it, it should contain 4 things
+            #  0        1           2           3
+            # matrix    homeTurn     HomeTeam    visitor team
+            self._boardHistory = []
+        else:
+            #if the parameters is a list with 4 elements, means that it's being used to calculate future moves
+            #so all of the member variables will have values in the param constructor
+            #bri'ish pythons be like, that's a constructor, init
+            self._matrix = args[0][0]
+            self._homeTurn = args[0][1]
+            self._homeTeam = args[0][2]
+            self._vistorTeam = args[0][3]
+
+            self._boardHistory = []
 
     #==============================================
     #     Handeling adding and removing pieces
@@ -506,15 +524,32 @@ class Chessboard:
         team = None
         if pHome:
             team = self._homeTeam
-            print("White Pieces")
+            print("White Pieces Vision")
         else:
             team = self._vistorTeam
-            print("Black Pieces")
+            print("Black Pieces Vision")
 
         for piece in team.getPieceList():
             piece.printVision()
         
-        print("-End-")
+        print("-End of Vision-")
+
+    #print all the possible moves of a team, will be used for testing and possible player inputs
+    #param: home team or vistor team will have their moves printed   
+    #post: loop through the pieces on that team, and print each one along with their moves
+    def printTeamValidMoves(self, pHome):
+        team = None
+        if pHome:
+            team = self._homeTeam
+            print("White Pieces Valid Moves")
+        else:
+            team = self._vistorTeam
+            print("Black Pieces Valid Moves")
+
+        for piece in team.getPieceList():
+            piece.printValidMoves()
+        
+        print("-End of Valid Moves-")
 
     #============================================================================================
     # Handeling Checks
@@ -588,3 +623,90 @@ class Chessboard:
     #============================================================================================
     # Handeling move validation
     #============================================================================================
+        
+    #
+    #param: home team or vistor team will have their valid moves updated    
+    #post: loop through the pieces on that team, and update each one
+    def updateValidMovesTeam(self, pHome):
+        if pHome:
+            for piece in self._homeTeam.getPieceList():
+                self.updateValidMovesPiece(piece)
+        else:
+            for piece in self._vistorTeam.getPieceList():
+                self.updateValidMovesPiece(piece)
+
+    
+    #param: the piece that will be updated
+    #post: update the valid moves of that single piece
+    #return: true/false if the update is successful
+    def updateValidMovesPiece(self, pChessPiece):
+        #first clear the previous vision of the piece
+        pChessPiece.clearValidMoves()
+        
+        #quick exit incase the chessPiece in the param is not a piece or the chess piece isnt on a square
+        if not isinstance(pChessPiece, Chesspiece) or not pChessPiece.hasSquare():
+            return False
+        
+        #only the pawn has special needs, so if it's a pawn, take care of it differently, but everything else can use the same validation
+        if isinstance(pChessPiece, Pawn):
+            print("STUB")
+        else:
+            lastHistory = copy.deepcopy(self._boardHistory[-1])
+
+            for visionSquare in pChessPiece.getVision():
+                futureBoard = Chessboard(lastHistory)
+                if futureBoard.validatePossibleMove(pChessPiece.getSquare(), visionSquare):
+                    pChessPiece.addSquareToValidMoves(visionSquare)
+                
+
+        return True
+        """
+        if isinstance(pChessPiece, Rook):
+            self.updateVisionRook(pChessPiece)
+        elif isinstance(pChessPiece, Bishop):
+            self.updateVisionBishop(pChessPiece)
+        elif isinstance(pChessPiece, Queen):
+            #queen's movement is just rook and bishop combined
+            self.updateVisionRook(pChessPiece)
+            self.updateVisionBishop(pChessPiece)
+        elif isinstance(pChessPiece, King):
+            self.updateVisionKing(pChessPiece)
+        elif isinstance(pChessPiece, Knight):
+            self.updateVisionKnight(pChessPiece)
+        elif isinstance(pChessPiece, Pawn):
+            self.updateVisionPawn(pChessPiece)
+        else: 
+            #return false if it's not a valid piece
+            return False
+
+        
+        return True
+        """
+
+    #param: the ROOK that will be updated
+    #post: update the valid moves for specifically ROOKS
+    def updateValidRook(self, pRook):
+        for squares in pRook.getVision():
+            print("STUB")
+
+    #DO NOT USE FOR MOVING PIECES, ONLY SUPPOSE TO BE USED TO CALCULATE POSSIBLE MOVES
+    #IN OOP, THIS WOULD BE A PRIVATE FUNCTION
+    #param: square the piece is on
+    #param: it's new square
+    #post: makes the old square have no chesspiece, removes the piece on the new square from the game, 
+    #pChesspiece now linked to new square
+    def validatePossibleMove(self, pOldSquare, pNewSquare):
+        newSquare = self._matrix[pNewSquare.getRank()][pNewSquare.getFile()]
+        oldSquare = self._matrix[pOldSquare.getRank()][pOldSquare.getFile()]
+
+        movedPiece = oldSquare.getChessPiece()
+
+        oldSquare.removeChessPiece()
+
+        self.removePieceFromChessBoard(newSquare)
+
+        movedPiece.setSquare(newSquare)
+        newSquare.setChessPiece(movedPiece)
+
+        return self.isTeamInCheck(movedPiece.getPieceAllegiance())
+

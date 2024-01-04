@@ -18,6 +18,9 @@ class Chesspiece:
         #member variable int to see how many moves were made, good for pawn double jump
         self._moveCount = 0
 
+        #empty valid moves until it's on a square and the vision in calculate
+        self.clearValidMoves()
+
     #==============================================
     #getters
     #==============================================
@@ -82,14 +85,28 @@ class Chesspiece:
     def getVision(self):
         return self._vision 
     
-    #return: a list of strings of the location of the squares in this chess peice's vision
-    def getVisionLocations(self):
-        return list(map(lambda x: x.getLocation(), self._vision))
-    
     #param: square that is to be added to the piece's vision
     #post: add a square to the vision
     def addSquareToVision(self, pSquare):
         self._vision.append(pSquare)
+
+    #==============================================
+    #valid moves setters and getters
+    #==============================================
+    #using the vision, the chessboard can then calculate what squares are valid moves
+    
+    #post: clears the current Valid moves
+    def clearValidMoves(self):
+        self._validMoves = []
+
+    #return: the amount of valid moves this piece has
+    def getAmountOfValidMoves(self):
+        return len(self._validMoves)
+    
+    #param: square that is to be added to the piece's validMoveList
+    #post: add a square to the validMoves
+    def addSquareToValidMoves(self, pSquare):
+        self._validMoves.append(pSquare)
 
     #==============================================
     #prints
@@ -97,6 +114,18 @@ class Chesspiece:
     #post: prints the piece's type, color, location and vision
     def printVision(self):
         print("White" if self._home else "Black", type(self), self.getSquareLocation(), self.getVisionLocations(), "\n")
+
+    #return: a list of strings of the location of the squares in this chess peice's vision
+    def getVisionLocations(self):
+        return list(map(lambda x: x.getLocation(), self._vision))
+    
+    #post: prints the pieces' type, color, location and possible moves
+    def printValidMoves(self):
+        print("White" if self._home else "Black", type(self), self.getSquareLocation(), self.getValidMovesLocations(), "\n")
+
+    #return: a list of strings of the location of the squares of this chess piece's possible moves
+    def getValidMovesLocations(self):
+        return list(map(lambda x: x.getLocation(), self._validMoves))
 
 #=========================================================================================================================================
 #subclasseses of piece(aka the specific types)

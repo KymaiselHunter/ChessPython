@@ -18,15 +18,20 @@ testBoard = Chessboard()
 #testing the defualt creation
 testBoard.setUpChessBoard()
 testBoard.updateVisionAll()
+
+testBoard.updateValidMovesTeam(True)
+
 print("White In Check?", testBoard.isTeamInCheck(True))
 print("Black In Check?", testBoard.isTeamInCheck(False))
 testBoard.printBoard()
 
 testBoard.printTeamVision(True)
+testBoard.printTeamValidMoves(True)
 testBoard.printTeamVision(False)
+testBoard.printTeamValidMoves(False)
 
 
-
+"""
 testBoard.testFunc3()
 
 
@@ -37,3 +42,4 @@ testBoard.printBoard()
 
 testBoard.printTeamVision(True)
 testBoard.printTeamVision(False)
+"""

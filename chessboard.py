@@ -114,25 +114,6 @@ class Chessboard:
         self._homeTeam = Team()
         self._vistorTeam = Team()
 
-    def printBoard(self):
-        print("==========================")
-        for row in self._matrix:
-            displayString = "|"
-
-            for sq in row:
-                if sq.hasChessPiece():
-                    if(sq.getChessPiece().getPieceAllegiance()):
-                        displayString = displayString + 'W' 
-                    else: 
-                        displayString = displayString + 'B'
-                    displayString = displayString + sq.getChessPiece().getPieceType() + "|"
-                else:
-                    displayString = displayString + "  |"
-            
-            print(displayString)
-
-        print("==========================")
-
     #==============================================
     #     Handeling adding and removing pieces
     #==============================================
@@ -183,9 +164,9 @@ class Chessboard:
 
         return True
     
-    #==============================================
+    #============================================================================================
     # Handeling vision updates to the pieces
-    #==============================================
+    #============================================================================================
     
     #post: will update the visions of all of the pieces 
     def updateVisionAll(self):
@@ -387,29 +368,7 @@ class Chessboard:
             pPawn.addSquareToVision(self._matrix[currRank][currFile + 1]) 
 
 
-
-    #print all the visions of a team, will most likely be used for testing rn, but maybe modify to show all danger squares for king
-    #param: home team or vistor team will have their visions printed   
-    #post: loop through the pieces on that team, and print each one along with their visions
-    def printTeamVision(self, pHome):
-        team = None
-        if pHome:
-            team = self._homeTeam
-            print("White Pieces")
-        else:
-            team = self._vistorTeam
-            print("Black Pieces")
-
-        for piece in team.getPieceList():
-            piece.printVision()
-        
-        print("-End-")
-
-    #[REMOVED AND PUT INTO CHESS PIECE CLASS]
-    #param: piece that will be printed with it's vision
-    #post: prints the vision of a specific piece
-    #def printPieceVision(self, pChessPiece):
-    #    print(type(pChessPiece), pChessPiece.getSquareLocation(), pChessPiece.getVisionLocations(), "\n")
+    
 
     #helper for getting visions
     #param: rank
@@ -424,9 +383,9 @@ class Chessboard:
 
         return True
 
-    #==============================================
+    #============================================================================================
     # Handeling Board setup
-    #==============================================
+    #============================================================================================
     
     #param: row that will be filled with pawns
     #param: color that the pieces should be
@@ -479,3 +438,48 @@ class Chessboard:
         #white backrank
         self.placeDefaultBackRank(0,True)           
             
+    #============================================================================================
+    # Prints
+    #============================================================================================
+
+    def printBoard(self):
+        print("==========================")
+        for row in self._matrix:
+            displayString = "|"
+
+            for sq in row:
+                if sq.hasChessPiece():
+                    if(sq.getChessPiece().getPieceAllegiance()):
+                        displayString = displayString + 'W' 
+                    else: 
+                        displayString = displayString + 'B'
+                    displayString = displayString + sq.getChessPiece().getPieceType() + "|"
+                else:
+                    displayString = displayString + "  |"
+            
+            print(displayString)
+
+        print("==========================")
+
+    #[REMOVED AND PUT INTO CHESS PIECE CLASS]
+    #param: piece that will be printed with it's vision
+    #post: prints the vision of a specific piece
+    #def printPieceVision(self, pChessPiece):
+    #    print(type(pChessPiece), pChessPiece.getSquareLocation(), pChessPiece.getVisionLocations(), "\n")
+
+    #print all the visions of a team, will most likely be used for testing rn, but maybe modify to show all danger squares for king
+    #param: home team or vistor team will have their visions printed   
+    #post: loop through the pieces on that team, and print each one along with their visions
+    def printTeamVision(self, pHome):
+        team = None
+        if pHome:
+            team = self._homeTeam
+            print("White Pieces")
+        else:
+            team = self._vistorTeam
+            print("Black Pieces")
+
+        for piece in team.getPieceList():
+            piece.printVision()
+        
+        print("-End-")

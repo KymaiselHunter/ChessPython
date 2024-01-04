@@ -436,7 +436,26 @@ class Chessboard:
         self.placeRankOfPawns(1, True)
 
         #white backrank
-        self.placeDefaultBackRank(0,True)           
+        self.placeDefaultBackRank(0,True)  
+
+    #============================================================================================
+    # Test Functions (Remove Later)
+    #============================================================================================
+
+    #test function to purely test other functions by changing the board
+    def testFunc(self):
+        self.removePieceFromChessBoard(self._matrix[1][3])
+        self.addPieceToChessBoard(Queen(False), self._matrix[5][3])
+
+    #test function to purely test other functions by changing the board
+    def testFunc2(self):
+        #self.removePieceFromChessBoard(self._matrix[1][3])
+        self.addPieceToChessBoard(Knight(False), self._matrix[2][2])
+
+    def testFunc3(self):
+        self.removePieceFromChessBoard(self._matrix[1][2])
+        self.addPieceToChessBoard(Queen(False), self._matrix[3][0])
+        self.addPieceToChessBoard(Knight(True), self._matrix[5][2])
             
     #============================================================================================
     # Prints
@@ -483,3 +502,46 @@ class Chessboard:
             piece.printVision()
         
         print("-End-")
+
+    #============================================================================================
+    # Handeling Checks
+    #============================================================================================
+    #this gonna be using the vision from the previous things to see if in check
+    #param: boolean that represents which team i will be checking 
+    #if it's true, check if the whiteTeam is in check(loop through black vision), else check the black team(loop through white)
+    #return: true if the team is in check, false if the team is not in check
+    def isTeamInCheck(self, pHome):
+        attackers = None
+        defenders = None
+
+        #depending on the parameters, set which one will be the one that needs to loop through their visions,
+        #vs which one i need to find the king square [attacker = vision][defender = king]
+        if pHome:
+            attackers = self._vistorTeam
+            defenders = self._homeTeam
+        else: 
+            attackers = self._homeTeam
+            defenders = self._vistorTeam
+
+        #we just need the piece list for this part really
+        attackers = attackers.getPieceList()
+        defenders = defenders.getPieceList()
+
+        defendersSquare = None
+
+        for piece in defenders:
+            if isinstance(piece, King):
+                defendersSquare = piece.getSquare()
+
+        #short exit, cant be in check in no king exists
+        if defendersSquare == None:
+            return False
+        
+        #now that we have the square the king is on, lets see if this square is in any of the piece vision
+        for piece in attackers:
+            #if the defender square is found in a piece's vision, return true
+            if defendersSquare in piece.getVision():
+                return True
+        
+        #if it isnt found within that loop, the king is not in check, so return false
+        return False

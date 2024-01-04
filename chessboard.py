@@ -651,37 +651,19 @@ class Chessboard:
         if isinstance(pChessPiece, Pawn):
             print("STUB")
         else:
-            lastHistory = copy.deepcopy(self._boardHistory[-1])
+            pChessPiece.printVision()
 
             for visionSquare in pChessPiece.getVision():
-                futureBoard = Chessboard(lastHistory)
+                #quick skip to next iteration if the square in it's vision has an friendly piece
+                if visionSquare.hasChessPiece() and visionSquare.getChessPiece().getPieceAllegiance() == pChessPiece.getPieceAllegiance():
+                    continue
+
+                futureBoard = Chessboard(copy.deepcopy(self._boardHistory[-1]))
                 if futureBoard.validatePossibleMove(pChessPiece.getSquare(), visionSquare):
                     pChessPiece.addSquareToValidMoves(visionSquare)
                 
 
         return True
-        """
-        if isinstance(pChessPiece, Rook):
-            self.updateVisionRook(pChessPiece)
-        elif isinstance(pChessPiece, Bishop):
-            self.updateVisionBishop(pChessPiece)
-        elif isinstance(pChessPiece, Queen):
-            #queen's movement is just rook and bishop combined
-            self.updateVisionRook(pChessPiece)
-            self.updateVisionBishop(pChessPiece)
-        elif isinstance(pChessPiece, King):
-            self.updateVisionKing(pChessPiece)
-        elif isinstance(pChessPiece, Knight):
-            self.updateVisionKnight(pChessPiece)
-        elif isinstance(pChessPiece, Pawn):
-            self.updateVisionPawn(pChessPiece)
-        else: 
-            #return false if it's not a valid piece
-            return False
-
-        
-        return True
-        """
 
     #param: the ROOK that will be updated
     #post: update the valid moves for specifically ROOKS
@@ -708,5 +690,5 @@ class Chessboard:
         movedPiece.setSquare(newSquare)
         newSquare.setChessPiece(movedPiece)
 
-        return self.isTeamInCheck(movedPiece.getPieceAllegiance())
+        return not self.isTeamInCheck(movedPiece.getPieceAllegiance())
 

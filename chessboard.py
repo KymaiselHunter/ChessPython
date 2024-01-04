@@ -6,6 +6,9 @@ from chesspiece import Bishop
 from chesspiece import Queen
 from chesspiece import King
 
+#copy will be used for a version control of the board itself
+import copy
+
 #each Chessboard needs 64 squares, each sqaure can be empty or have a piece
 
 class Square:
@@ -329,7 +332,7 @@ class Chessboard:
             #if the square infront of it has not piece and the pawn hasnt moved, it can see it's jumpable square and it's inBounds
             if pPawn.getMoveCount() == 0 and not nextSquare.hasChessPiece() and self.inBounds(currRank+direction, currFile):
                 pPawn.setJumpSquare(self._matrix[currRank + direction][currFile])
-                print(pPawn.getMoveCount() == 0 and not nextSquare.hasChessPiece() and self.inBounds(currRank+direction, currFile))
+                #print(pPawn.getMoveCount() == 0 and not nextSquare.hasChessPiece() and self.inBounds(currRank+direction, currFile))
 
 
         #now we do it's vision

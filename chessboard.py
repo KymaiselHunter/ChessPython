@@ -114,6 +114,13 @@ class Chessboard:
         self._homeTeam = Team()
         self._vistorTeam = Team()
 
+        #member variable that acts as a queue for version control
+        #the board history, when adding a list into it, it should contain 4 things
+        #  0        1           2           3
+        # matrix    homeTurn     HomeTeam    visitor team
+        self._boardHistory = []
+        
+
     #==============================================
     #     Handeling adding and removing pieces
     #==============================================
@@ -418,6 +425,9 @@ class Chessboard:
 
     #post: cleans the board and sets up the board for a new default game
     def setUpChessBoard(self):
+        #reset the history
+        self.resetHistory()
+
         #removes all pieces from the board and teams
         self.clearBoard()
 
@@ -436,7 +446,10 @@ class Chessboard:
         self.placeRankOfPawns(1, True)
 
         #white backrank
-        self.placeDefaultBackRank(0,True)  
+        self.placeDefaultBackRank(0,True)
+
+        #now that the board is setup and at the start, start the history
+        self.addToHistory()
 
     #============================================================================================
     # Test Functions (Remove Later)
@@ -545,3 +558,33 @@ class Chessboard:
         
         #if it isnt found within that loop, the king is not in check, so return false
         return False
+
+    #============================================================================================
+    # Handeling Version Control
+    #============================================================================================
+    #since we can now handle checks, i want to create a function that calculates and updates all the possible moves each piece
+    #on a team has, that being said, how i want it to work, is that it attempts every move, 
+    #after u move, if ur in check; moved ontop of ur own guy; etc, then it's not valid
+    #then it should go back to the previous matrix
+    #that being said, i need a version control membervariable and functions, then once i have that, i can create the valid moves func
+    #once i have that, all i would have left is ending the game, castleing, then the interface of the game
+    
+    #post: erases the board history and resets the version control variable
+    def resetHistory(self):
+        self._boardHistory = []
+
+    #will add a list to the history stack, that list will contain copies of the current values inside
+    #  0        1           2           3
+    # matrix    homeTurn     HomeTeam    visitor team
+    def addToHistory(self):
+        #make a list of the current values of this 
+        newHistory = [self._matrix, self._homeTurn, self._homeTeam, self._vistorTeam]
+
+        #make a deep copy of all of these, i put it in the list first as im hoping the deepcopy will preserve 
+        #the links between the chesspieces, and hope the chesspieces in the matrix are the same as the ones in the teams
+        newHistory = copy.deepcopy(newHistory)
+        self._boardHistory.append(newHistory)
+
+    #============================================================================================
+    # Handeling move validation
+    #============================================================================================

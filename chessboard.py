@@ -9,8 +9,11 @@ from chesspiece import King
 #copy will be used for a version control of the board itself
 import copy
 
-#each Chessboard needs 64 squares, each sqaure can be empty or have a piece
 
+#============================================================================================
+#     Square class
+#============================================================================================
+#each Chessboard needs 64 squares, each sqaure can be empty or have a piece
 class Square:
     #constructor, will make the square have no piece, but will indicate it's location on the board using rank and file as x and y
     def __init__(self, pRank, pFile):
@@ -57,6 +60,47 @@ class Square:
         self._ChessPiece = None
 
 
+#============================================================================================
+#     Team class
+#============================================================================================
+#a chessboard HAS TWO teams
+class Team:
+    def __init__(self):
+        #list of pieces
+        self._pieceList = []
+
+        #variable to keep track if it's in check
+        self._check = False
+
+    #getters
+    #return: the list of pieces 
+    def getPieceList(self):
+        return self._pieceList
+    
+    #return: the _check member variable that indicates if this team is in check
+    def inCheck(self):
+        return self._check
+    
+    #setters
+    #post: set the _check variable equal to pCheck
+    def setCheck(self, pCheck):
+        self._check = pCheck
+
+    #param: piece that will be added to the pieceList
+    #post: adds the piece to the list
+    def addPieceToTeam(self, pChessPiece):
+        self._pieceList.append(pChessPiece)
+
+    #param: piece that will be removed from the pieceList
+    #post: removes the piece from the piece lists
+    def removePieceFromTeam(self, pChessPiece):
+        self._pieceList.remove(pChessPiece)
+
+
+
+#============================================================================================
+#     Chessboard class
+#============================================================================================
 class Chessboard:
     #create an empty chessboard(matrix of 8x8 empty sqaures )
     def __init__(self):
@@ -67,8 +111,8 @@ class Chessboard:
         self._homeTurn = True
 
         #list of pieces for each team
-        self._homePieces = []
-        self._vistorPieces = []
+        self._homeTeam = Team()
+        self._vistorTeam = Team()
 
     def printBoard(self):
         print("==========================")
@@ -101,9 +145,9 @@ class Chessboard:
             return False
         
         if(pSquare.getChessPiece().getPieceAllegiance()):
-            self._homePieces.remove(pSquare.getChessPiece())
+            self._homeTeam.removePieceFromTeam(pSquare.getChessPiece())
         else:
-            self._vistorPieces.remove(pSquare.getChessPiece())
+            self._vistorTeam.removePieceFromTeam(pSquare.getChessPiece())
 
         pSquare.getChessPiece().removeSquare()
         pSquare.removeChessPiece()
@@ -127,9 +171,9 @@ class Chessboard:
             return False
         
         if(pNewPiece.getPieceAllegiance()):
-            self._homePieces.append(pNewPiece)
+            self._homeTeam.addPieceToTeam(pNewPiece)
         else:
-            self._vistorPieces.append(pNewPiece)
+            self._vistorTeam.addPieceToTeam(pNewPiece)
         
         pSquare.setChessPiece(pNewPiece)
         pNewPiece.setSquare(pSquare)
@@ -155,10 +199,10 @@ class Chessboard:
     #post: loop through the pieces on that team, and update each one
     def updateVisionTeam(self, pHome):
         if pHome:
-            for piece in self._homePieces:
+            for piece in self._homeTeam.getPieceList():
                 self.updateVisionPiece(piece)
         else:
-            for piece in self._vistorPieces:
+            for piece in self._vistorTeam.getPieceList():
                 self.updateVisionPiece(piece)
 
 
@@ -350,13 +394,13 @@ class Chessboard:
     def printTeamVision(self, pHome):
         team = None
         if pHome:
-            team = self._homePieces
+            team = self._homeTeam
             print("White Pieces")
         else:
-            team = self._vistorPieces
+            team = self._vistorTeam
             print("Black Pieces")
 
-        for piece in team:
+        for piece in team.getPieceList():
             piece.printVision()
         
         print("-End-")

@@ -202,4 +202,40 @@ class Knight(Chesspiece):
 class Rook(Chesspiece):
     def __init__(self, pHome):
         super().__init__(pHome)
-        self._pieceType = 'R'      
+        self._pieceType = 'R'
+
+        #extra member variables since rooks can castle
+        #we need a member variable to hold the square this rook will go to
+        #we need a member variable to hold the square the king will go
+        #we need a member variable list to hold all the squares that need to be clear in order to castle
+
+        self._rookDestination = None
+        self._kingDestination = None
+        self._castleSquares = []
+
+    #setters and getters for the special rook member variables
+    #return: rookDestination
+    def getRookDestination(self):
+        return self._rookDestination
+    
+    #param: square that the rook should land on
+    #post: saves the square the rook should land on in the rookDestination member variable
+    def setRookDestination(self, pSquare):
+        self._rookDestination = pSquare
+
+    #return: kingDestination
+    def getKingDestination(self):
+        return self._kingDestination
+    
+    #param: square that the king should land on
+    #post: saves the square the king should land on in the rookDestination member variable
+    def setRookDestination(self, pSquare):
+        self._kingDestination = pSquare
+    
+    #return the list of squares that should be clear to get this rook to castle
+    def getCastleSquares(self):
+        return self._castleSquares
+    
+    #param: square that needs to be cleared inorder to castle
+    def addCastleSquare(self, pSquare):
+        self._castleSquares.append(pSquare)

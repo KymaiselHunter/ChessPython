@@ -746,7 +746,7 @@ class Chessboard:
             self._homeTurn = not self._homeTurn
 
             self.addToHistory()
-            print("success?")
+            #print("success?")
 
         #testBoard.printTeamVision(True)
         #testBoard.printTeamValidMoves(True)
@@ -782,7 +782,7 @@ class Chessboard:
             firstSquare = self._matrix[int(firstSquare[1])-1][letterToFile[firstSquare[0]]]
             secondSquare = self._matrix[int(secondSquare[1])-1][letterToFile[secondSquare[0]]]
 
-        print(firstSquare.getRank(), firstSquare.getFile(), firstSquare.hasChessPiece())
+        #print(firstSquare.getRank(), firstSquare.getFile(), firstSquare.hasChessPiece())
         self.playerMove(firstSquare, secondSquare)
 
     #param: old square

@@ -840,10 +840,22 @@ class Chessboard:
         self.setUpChessBoard()
 
         play = True
+        winner = None
 
         while play:
             self.updateVisionAll()
             self.updateValidMovesTeam(self._homeTurn)
+            
+            if self.isEnd(self._homeTurn):
+                play = False
+                if self.isTeamInCheck(self._homeTurn):
+                    if self._homeTurn:
+                        winner = self._vistorTeam
+                    else:
+                        winner = self._homeTeam
+
+                break
+
             print("White to Play" if self._homeTurn else "Black to Play")
             self.printBoard()
             self.printTeamValidMoves(self._homeTurn)
@@ -852,8 +864,11 @@ class Chessboard:
             self._homeTurn = not self._homeTurn
 
             self.addToHistory()
-            #print("success?")
-
+            
+        if winner == None:
+            print("STALEMATE")
+        else:
+            print("WHITE WINS" if winner == self._homeTeam else "BLACK WINS")
         #testBoard.printTeamVision(True)
         #testBoard.printTeamValidMoves(True)
         #testBoard.printTeamVision(False)
@@ -906,6 +921,33 @@ class Chessboard:
         movedPiece.increaseMoveCount()
 
         self.updateVisionAll()
+
+
+    #final game mechanic, winning/losing or a draw, so we need one function to check if it's the end
+    #(no more valide moves), and we'll use isCheck in the playing the game function to see if it's
+    #checkmate or stalemate
+    #param: the team that is being checked for checkmate 
+    #returns if they have no more valid moves
+    def isEnd(self, pHome):
+        team = None
+
+        if pHome:
+            team = self._homeTeam
+        else:
+            team = self._vistorTeam
+
+        count = team.getAmountOfValidMoves()
+
+        if self.canCastle(team.getKingSideRook()):
+            count += 1
+        
+        if self.canCastle(team.getQueenSideRook()):
+            count += 1
+
+        if count > 0:
+            return False
+        
+        return True
 
 
 

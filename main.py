@@ -1,7 +1,7 @@
 # main.py
 from chessboard import Chessboard
 
-print("Hello World")
+print("Hello World?")
 
 #testing display + adding a random thingy
 testBoard = Chessboard()

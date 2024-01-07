@@ -213,6 +213,11 @@ class Rook(Chesspiece):
         self._kingDestination = None
         self._castleSquares = []
 
+        #because i didnt really plan well enough for the casteling part of this, i decided to
+        #make a pointer to the king in the rook subclass so we dont have to loop 
+        #everytime to check for the king being in check or not
+        self._kingPointer = None
+
     #setters and getters for the special rook member variables
     #return: rookDestination
     def getRookDestination(self):
@@ -229,7 +234,7 @@ class Rook(Chesspiece):
     
     #param: square that the king should land on
     #post: saves the square the king should land on in the rookDestination member variable
-    def setRookDestination(self, pSquare):
+    def setKingDestination(self, pSquare):
         self._kingDestination = pSquare
     
     #return the list of squares that should be clear to get this rook to castle
@@ -239,3 +244,12 @@ class Rook(Chesspiece):
     #param: square that needs to be cleared inorder to castle
     def addCastleSquare(self, pSquare):
         self._castleSquares.append(pSquare)
+
+    #return: kingPointer
+    def getKing(self):
+        return self._kingPointer
+    
+    #param: king of the team this rook is on
+    #post: saves the king so that the rook can access it's stuff in O(1) time
+    def setKing(self, pKing):
+        self._kingPointer = pKing

@@ -72,6 +72,10 @@ class Team:
         #variable to keep track if it's in check
         self._check = False
 
+        #rook member variables so we can instanly access castleability when printing it
+        self._kingSideRook = None
+        self._queenSideRook = None
+
     #getters
     #return: the list of pieces 
     def getPieceList(self):
@@ -89,6 +93,14 @@ class Team:
 
         return count
     
+    #return: king side rook
+    def getKingSideRook(self):
+        return self._kingSideRook
+    
+    #return: queen side rook
+    def getQueenSideRook(self):
+        return self._queenSideRook
+
     #setters
     #post: set the _check variable equal to pCheck
     def setCheck(self, pCheck):
@@ -103,6 +115,14 @@ class Team:
     #post: removes the piece from the piece lists
     def removePieceFromTeam(self, pChessPiece):
         self._pieceList.remove(pChessPiece)
+
+    #post: set the _kingSideRook
+    def setKingSideRook(self, pRook):
+        self._kingSideRook = pRook
+
+    #post: set the _queenSideRook
+    def setQueenSideRook(self, pRook):
+        self._queenSideRook = pRook
 
 
 
@@ -425,8 +445,19 @@ class Chessboard:
     def placeDefaultBackRank(self, pRank, pHome):
         #manually for each thingy
         #rooks
-        self.addPieceToChessBoard(Rook(pHome), self._matrix[pRank][0])
-        self.addPieceToChessBoard(Rook(pHome), self._matrix[pRank][-1])
+        #need to hold rooks as we will add the other pieces to their member variabels
+        castleKing = Rook(pHome)
+        castleQueen = Rook(pHome)
+
+        if(pHome):
+            self._homeTeam.setKingSideRook(castleKing)
+            self._homeTeam.setQueenSideRook(castleQueen)
+        else:
+            self._vistorTeam.setKingSideRook(castleKing)
+            self._vistorTeam.setQueenSideRook(castleQueen)
+        
+        self.addPieceToChessBoard(castleKing, self._matrix[pRank][0])
+        self.addPieceToChessBoard(castleQueen, self._matrix[pRank][-1])
 
         #knights
         self.addPieceToChessBoard(Knight(pHome), self._matrix[pRank][1])
@@ -439,6 +470,24 @@ class Chessboard:
         #royalty, king and queen
         self.addPieceToChessBoard(King(pHome), self._matrix[pRank][3])
         self.addPieceToChessBoard(Queen(pHome), self._matrix[pRank][-4])
+
+        #set up destination squares for rooks and castle squares
+        castleKing.addCastleSquare(self._matrix[pRank][1])
+        castleKing.addCastleSquare(self._matrix[pRank][2])
+
+        castleKing.setKingDestination(self._matrix[pRank][1])
+        castleKing.setRookDestination(self._matrix[pRank][2])
+
+        castleKing.setKing(self._matrix[pRank][3].getChessPiece())
+
+        castleQueen.addCastleSquare(self._matrix[pRank][-2])
+        castleQueen.addCastleSquare(self._matrix[pRank][-3])
+        castleQueen.addCastleSquare(self._matrix[pRank][-4])
+
+        castleQueen.setKingDestination(self._matrix[pRank][-3])
+        castleQueen.setRookDestination(self._matrix[pRank][-4])
+
+        castleQueen.setKing(self._matrix[pRank][3].getChessPiece())
         
 
     #post: cleans the board and sets up the board for a new default game
@@ -548,6 +597,16 @@ class Chessboard:
 
         for piece in team.getPieceList():
             piece.printValidMoves()
+
+        if team.getKingSideRook() and self.canCastle(team.getKingSideRook()):
+            print("King Side Castle is Available")
+        else:
+            print("King Side Castle is not Available")
+
+        if team.getQueenSideRook() and self.canCastle(team.getQueenSideRook()):
+            print("Queen Side Castle is Available")
+        else: 
+            print("Queen Side Castle is not Available")
         
         print("-End of Valid Moves-")
 
@@ -580,6 +639,7 @@ class Chessboard:
         for piece in defenders:
             if isinstance(piece, King):
                 defendersSquare = piece.getSquare()
+                break
 
         #short exit, cant be in check in no king exists
         if defendersSquare == None:
@@ -593,6 +653,52 @@ class Chessboard:
         
         #if it isnt found within that loop, the king is not in check, so return false
         return False
+    
+    #in hindsight i should have made the code in the function more general so i can reuse it 
+    #for features such as casteling, but i didnt, hence i will copy and paste some of my own code
+    #and use it for handeling castle-ability
+    #param: rook on the side that will caslte
+    #return: will return ture of false if the rook can castle on that side
+    def canCastle(self, pRook):
+        #firstly, if the king on the rook's team is currently in check, it cannot castle so early return false
+        #this also checks if a king exists
+        if(self.isTeamInCheck(pRook.getPieceAllegiance())):
+            return False
+        
+        #secondly, if either the king or rook has moved, also early exit
+        if pRook.getMoveCount() > 0 or pRook.getKing().getMoveCount() > 0:
+            return False
+        
+        #not a rule of chess but how the board is setup
+        #if there is no castle squares nor destinations, then there will never be any casteling
+        if not pRook.getKingDestination() or not pRook.getRookDestination() or len(pRook.getCastleSquares()) == 0:
+            return False
+        
+        #if the squares between the king and rook are not vacant it cannot castle
+        for square in pRook.getCastleSquares():
+            if square.hasChessPiece():
+                return False
+
+        #get the team that is attacking so we can loop through it's vision
+        attackers = None
+
+        #depending on the rook alliegience from parameters,
+        #set which team will be the one that needs to loop through their visions,
+        #vs which one i need to find the castle squares
+        if pRook.getPieceAllegiance():
+            attackers = self._vistorTeam.getPieceList()
+        else: 
+            attackers = self._homeTeam.getPieceList()
+
+        #check if the castle squares are in the vision, if one is, then return false
+        for piece in attackers:
+            #if the destination squares are found in a piece's vision, return False 
+            #as squares the king is crossing over or finishing on should not be in check
+            if pRook.getKingDestination() in piece.getVision() or pRook.getRookDestination() in piece.getVision():
+                return False
+            
+        #if it gets through, allllll of this, it can castle, so return True
+        return True
 
     #============================================================================================
     # Handeling Version Control
@@ -732,11 +838,11 @@ class Chessboard:
     #setup a board, then starts the game loop
     def playGameText(self):
         self.setUpChessBoard()
-        self.updateVisionAll()
 
         play = True
 
         while play:
+            self.updateVisionAll()
             self.updateValidMovesTeam(self._homeTurn)
             print("White to Play" if self._homeTurn else "Black to Play")
             self.printBoard()

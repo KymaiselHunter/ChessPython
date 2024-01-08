@@ -875,36 +875,64 @@ class Chessboard:
         #testBoard.printTeamValidMoves(False)
             
     def getPlayerMoveText(self):
-        #input command in the form
-        #square 'to'
-        print("Give first square")
-        firstSquare = input()
 
-        print("Give second square")
-        secondSquare = input()
+        firstSquare = None
+        secondSquare = None
 
-        letterToFile = {'A' : 7, 'B' : 6, 'C' : 5, 'D' : 4, 'E' : 3, 'F' : 2, 'G' : 1, 'H' : 0} 
+        validInput = False
+        castle = None
 
-        firstSquare = self._matrix[int(firstSquare[1])-1][letterToFile[firstSquare[0]]]
-        secondSquare = self._matrix[int(secondSquare[1])-1][letterToFile[secondSquare[0]]]
-
-        #print(firstSquare.getRank(), firstSquare.getFile())
-
-        #firstSquare.getChessPiece().printValidMoves()
-        #print(not firstSquare.hasChessPiece(), firstSquare.getChessPiece().getPieceAllegiance() != self._homeTurn, not secondSquare in firstSquare.getChessPiece().getValidMoves())
-        while not firstSquare.hasChessPiece() or firstSquare.getChessPiece().getPieceAllegiance() != self._homeTurn or not secondSquare in firstSquare.getChessPiece().getValidMoves():
-            print("Invalid Input")
+        while not validInput:
+            #input command in the form
+            #square 'to'
             print("Give first square")
             firstSquare = input()
 
             print("Give second square")
             secondSquare = input()
 
+            letterToFile = {'A' : 7, 'B' : 6, 'C' : 5, 'D' : 4, 'E' : 3, 'F' : 2, 'G' : 1, 'H' : 0} 
+
             firstSquare = self._matrix[int(firstSquare[1])-1][letterToFile[firstSquare[0]]]
             secondSquare = self._matrix[int(secondSquare[1])-1][letterToFile[secondSquare[0]]]
+            
+            # first condition for early invalid
+            # if the first square doesnt have a piece, or if it doesnt match the turn
+            if not firstSquare.hasChessPiece() or firstSquare.getChessPiece().getPieceAllegiance() != self._homeTurn:
+                print("Invalid Input")
+            #  or the pieces cant go to the second square
+            elif not secondSquare in firstSquare.getChessPiece().getValidMoves():
+                #caslte attempt if one is the king
+                if isinstance(firstSquare.getChessPiece(), King):
+                    #get the curr team
+                    team = None
 
-        #print(firstSquare.getRank(), firstSquare.getFile(), firstSquare.hasChessPiece())
-        self.playerMove(firstSquare, secondSquare)
+                    if self._homeTurn:
+                        team = self._homeTeam
+                    else:
+                        team = self._vistorTeam
+
+                    if secondSquare.getChessPiece() == team.getKingSideRook() or secondSquare == team.getKingSideRook().getKingDestination():
+                        if self.canCastle(team.getKingSideRook()):
+                            #castle
+                            castle = team.getKingSideRook()
+                            validInput = True
+                            break
+                    elif secondSquare.getChessPiece() == team.getQueenSideRook() or secondSquare == team.getQueenSideRook().getKingDestination():
+                        if self.canCastle(team.getKingSideRook()):
+                            #castle
+                            castle = team.getQueenSideRook()
+                            validInput = True
+                            break
+                print("Invalid Input")
+            else:
+                validInput = True
+
+        if castle:
+            #castle func
+            self.performCastle(castle, firstSquare.getChessPiece())
+        else:
+            self.playerMove(firstSquare, secondSquare)
 
     #param: old square
     #param: new square
@@ -921,6 +949,26 @@ class Chessboard:
         movedPiece.increaseMoveCount()
 
         self.updateVisionAll()
+
+    #pre: the current rook and king CAN caslte, do not use this function unless tested using can Castle function externally
+    #param: the rook that is being castled
+    #param: the king that is being castle
+    #post: performs a castle
+    def performCastle(self, pRook, pKing):
+        pKing.getSquare().removeChessPiece()
+        pRook.getSquare().removeChessPiece()
+
+        pKing.setSquare(pRook.getKingDestination())
+        pRook.getKingDestination().setChessPiece(pKing)
+
+        pRook.setSquare(pRook.getRookDestination())
+        pRook.getRookDestination().setChessPiece(pRook)
+
+        pKing.increaseMoveCount()
+        pRook.increaseMoveCount()
+
+        self.updateVisionAll()
+
 
 
     #final game mechanic, winning/losing or a draw, so we need one function to check if it's the end

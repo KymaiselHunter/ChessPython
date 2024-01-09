@@ -9,6 +9,11 @@ from chesspiece import King
 #copy will be used for a version control of the board itself
 import copy
 
+#pygame imports
+import sys
+
+import pygame
+
 
 #============================================================================================
 #     Square class
@@ -148,6 +153,14 @@ class Chessboard:
             #  0        1           2           3
             # matrix    homeTurn     HomeTeam    visitor team
             self._boardHistory = []
+
+            #handling drawing
+            pygame.init()
+
+            pygame.display.set_caption("Kyle's Chess in Python")
+            self._screen = pygame.display.set_mode((1000, 800))
+            self._clock = pygame.time.Clock()
+
         else:
             #if the parameters is a list with 4 elements, means that it's being used to calculate future moves
             #so all of the member variables will have values in the param constructor
@@ -158,6 +171,21 @@ class Chessboard:
             self._vistorTeam = args[0][3]
 
             self._boardHistory = []
+
+        #constants
+        self._NEUTRAL_IMAGE_URL = {
+            "Board" : 'assets/images/chessboardCom.png'
+        }
+
+        self._PIECE_IMAGE_URL_RED = {
+            "Pawn" : 'assets/images/pawnRed.png',
+            "Rook" : 'assets/images/rookRed.png'
+        }
+
+        self._PIECE_IMAGE_URL_PURPLE = {
+            "Pawn" : 'assets/images/pawnPurple.png',
+            "Rook" : 'assets/images/rookPurple.png'
+        }
 
     #==============================================
     #     Handeling adding and removing pieces
@@ -869,10 +897,7 @@ class Chessboard:
             print("STALEMATE")
         else:
             print("WHITE WINS" if winner == self._homeTeam else "BLACK WINS")
-        #testBoard.printTeamVision(True)
-        #testBoard.printTeamValidMoves(True)
-        #testBoard.printTeamVision(False)
-        #testBoard.printTeamValidMoves(False)
+            
             
     def getPlayerMoveText(self):
 
@@ -996,8 +1021,102 @@ class Chessboard:
             return False
         
         return True
+    
+
+    #setup a board, then starts the game loop
+    #this is the graphic version so no more text, or atleast this time it's going to be drawing at least
+    def playGameGraphic(self):
+        self.setUpChessBoard()
+
+        play = True
+        winner = None
+
+        while play:
+            self.updateVisionAll()
+            self.updateValidMovesTeam(self._homeTurn)
+            
+            if self.isEnd(self._homeTurn):
+                play = False
+                if self.isTeamInCheck(self._homeTurn):
+                    if self._homeTurn:
+                        winner = self._vistorTeam
+                    else:
+                        winner = self._homeTeam
+
+                break
+
+            
+            print("White to Play" if self._homeTurn else "Black to Play")
+
+            self.displayScreen()
 
 
 
+            self.printBoard()
+            self.printTeamValidMoves(self._homeTurn)
+            while True:
+                self.getPlayerMoveGraphic()
 
+            self._homeTurn = not self._homeTurn
+
+            self.addToHistory()
+            
+        if winner == None:
+            print("STALEMATE")
+        else:
+            print("WHITE WINS" if winner == self._homeTeam else "BLACK WINS")
+
+    #============================================================================================
+    # Handeling drawing the baord
+    #============================================================================================
+
+    #draw the baord from black's perspective
+    #param: side length of chess board
+    #param: tuple of x and y coord
+    def drawBoardBlack(self, pLength, pCoords):
+        board =  pygame.image.load('assets/images/chessboardCom.png')
+        board = pygame.transform.scale(board, (pLength, pLength))
+        self._screen.blit(board, pCoords)
+        
+        piece = pygame.image.load('assets/images/pawnRed.png')
+        for i in range(8):
+            for j in range(8):
+                if not self._matrix[i][j].hasChessPiece():
+                    continue
+                
+                
+                piece = self._matrix[i][j].getChessPiece()
+                
+                currDictionary = None
+                if piece.getPieceAllegiance():
+                    currDictionary = self._PIECE_IMAGE_URL_RED
+                else:
+                    currDictionary = self._PIECE_IMAGE_URL_PURPLE
+
+                if isinstance(piece, Pawn):
+                    piece = pygame.image.load(currDictionary['Pawn'])
+                else:
+                    piece = pygame.image.load(currDictionary['Rook'])
+
+                squareSize = pLength/8
+
+                piece = pygame.transform.scale(piece, ((squareSize/8) * 7, (squareSize/8) *7))
+                self._screen.blit(piece, (squareSize*j + squareSize/16 + pCoords[0], squareSize*i + squareSize/16 + pCoords[1]))
+                
+
+    #
+    def displayScreen(self):
+        self._screen.fill((14, 219, 248))
+
+        self.drawBoardBlack(755, (0,10))
+
+        pygame.display.update()
+
+    def getPlayerMoveGraphic(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+        
 

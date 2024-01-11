@@ -978,7 +978,7 @@ class Chessboard:
 
         movedPiece.increaseMoveCount()
 
-        self.updateVisionAll()
+        #self.updateVisionAll()
 
     #pre: the current rook and king CAN caslte, do not use this function unless tested using can Castle function externally
     #param: the rook that is being castled
@@ -997,7 +997,7 @@ class Chessboard:
         pKing.increaseMoveCount()
         pRook.increaseMoveCount()
 
-        self.updateVisionAll()
+        #self.updateVisionAll()
 
 
 
@@ -1126,6 +1126,15 @@ class Chessboard:
         validInput = False
         castle = None
 
+        #get the curr team
+        team = None
+
+        if self._homeTurn:
+            team = self._homeTeam
+        else:
+            team = self._vistorTeam
+
+
         while not validInput:
             #input command in the form
             #square 'to'
@@ -1156,43 +1165,80 @@ class Chessboard:
                         file = (event.dict['pos'][0] - self._BLACK_BOARD_COORDINATES[0])//(self._BLACK_BOARD_LENGTH//8)
                         selectedSquare = self._matrix[rank][file]
                         
-                        print("board", rank, file, selectedSquare.getLocation())
+                        #if there's no current first square, the selected square is immedietly that one
+                        if not firstSquare:
+                            #if selected square is has a piece on the team
+                            if selectedSquare.hasChessPiece() and selectedSquare.getChessPiece().getPieceAllegiance() == self._homeTurn:
+                                firstSquare = selectedSquare
+                            self.testFunction(selectedSquare, firstSquare, secondSquare, castle)
+                        elif selectedSquare == firstSquare:
+                            firstSquare = None
+                            print("tf")
+                            self.testFunction(selectedSquare, firstSquare, secondSquare, castle)
+                        #everything after this assumes first square has a value
+                        #so the first things to check for if the person is trying unselect, (picking an empty square), this is also 
+                        #how u castle tho, so u must check for that as welll
+                        #we also have to see if they're trying to jump to an empty square
+                        elif not selectedSquare.hasChessPiece():
+                            #if the piece on the first square is a king, we may check for castle, else, it's an unselect
+                            #invert this idea for early exit
+                            if not isinstance(firstSquare.getChessPiece(), King):
+                                if selectedSquare in firstSquare.getChessPiece().getValidMoves():
+                                    secondSquare = selectedSquare
+                                    validInput = True
+                                    self.testFunction(selectedSquare, firstSquare, secondSquare, castle)
+                                    continue
 
-            #if there's no currently selected square, dont need to check for valid move
-            if not selectedSquare:
-                continue
+                                firstSquare = None
+                                secondSquare = None
+                                self.testFunction(selectedSquare, firstSquare, secondSquare, castle)
+                                continue
+                            
+                            #everything from this point assumes it's a king
+                            if selectedSquare == team.getKingSideRook().getKingDestination():
+                                if self.canCastle(team.getKingSideRook()):
+                                    #castle
+                                    castle = team.getKingSideRook()
+                                    validInput = True
+                                    self.testFunction(selectedSquare, firstSquare, secondSquare, castle)
+                                    continue
+                                #secondSquare = team.getKingSideRook().getSquare()
 
-            """# first condition for early invalid
-            # if the first square doesnt have a piece, or if it doesnt match the turn
-            if not firstSquare.hasChessPiece() or firstSquare.getChessPiece().getPieceAllegiance() != self._homeTurn:
-                continue
-            #  or the pieces cant go to the second square
-            elif not secondSquare in firstSquare.getChessPiece().getValidMoves():
-                #caslte attempt if one is the king
-                if isinstance(firstSquare.getChessPiece(), King):
-                    #get the curr team
-                    team = None
+                            if selectedSquare == team.getQueenSideRook().getKingDestination():
+                                if self.canCastle(team.getQueenSideRook()):
+                                    #castle
+                                    castle = team.getQueenSideRook()
+                                    validInput = True
+                                    self.testFunction(selectedSquare, firstSquare, secondSquare, castle)
+                                    continue
+                                
+                                #secondSquare = team.getQueenSideRook().getSquare()
 
-                    if self._homeTurn:
-                        team = self._homeTeam
-                    else:
-                        team = self._vistorTeam
 
-                    if secondSquare.getChessPiece() == team.getKingSideRook() or secondSquare == team.getKingSideRook().getKingDestination():
-                        if self.canCastle(team.getKingSideRook()):
-                            #castle
-                            castle = team.getKingSideRook()
-                            validInput = True
-                            break
-                    elif secondSquare.getChessPiece() == team.getQueenSideRook() or secondSquare == team.getQueenSideRook().getKingDestination():
-                        if self.canCastle(team.getKingSideRook()):
-                            #castle
-                            castle = team.getQueenSideRook()
-                            validInput = True
-                            break
-                print("Invalid Input")
-            else:
-                validInput = True"""
+                            firstSquare = None
+                            secondSquare = None
+                            self.testFunction(selectedSquare, firstSquare, secondSquare, castle)
+                            continue
+
+                        elif selectedSquare.hasChessPiece():
+                            
+
+                            if selectedSquare.getChessPiece().getPieceAllegiance() == self._homeTurn:
+                                firstSquare = selectedSquare
+                                self.testFunction(selectedSquare, firstSquare, secondSquare, castle)
+                                continue
+
+                            if selectedSquare in firstSquare.getChessPiece().getValidMoves():
+                                secondSquare = selectedSquare
+                                validInput = True
+                                self.testFunction(selectedSquare, firstSquare, secondSquare, castle)
+                                continue
+
+                            firstSquare = None
+                            secondSquare = None
+                            self.testFunction(selectedSquare, firstSquare, secondSquare, castle)
+                            continue
+
 
         if castle:
             #castle func
@@ -1200,8 +1246,16 @@ class Chessboard:
         else:
             self.playerMove(firstSquare, secondSquare)
 
+        self.displayScreen()
 
-        
+
+    def testFunction(self, selectedSquare, firstSquare, secondSquare, castle):
+        print("board", selectedSquare.getLocation())
+        print("first square:", firstSquare.getLocation() if firstSquare else "None")
+        if not castle:
+            print("second square:", secondSquare.getLocation() if secondSquare else "None")
+        else:
+            print("caslte:", castle.getSquareLocation())
 
         
 

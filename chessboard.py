@@ -173,24 +173,26 @@ class Chessboard:
             self._boardHistory = []
 
         #constants
-        #image dictionaries
-        self._NEUTRAL_IMAGE_URL = {
-            "Board" : 'assets/images/chessboardCom.png'
-        }
-
-        self._PIECE_IMAGE_URL_RED = {
-            "Pawn" : 'assets/images/pawnRed.png',
-            "Rook" : 'assets/images/rookRed.png'
-        }
-
-        self._PIECE_IMAGE_URL_PURPLE = {
-            "Pawn" : 'assets/images/pawnPurple.png',
-            "Rook" : 'assets/images/rookPurple.png'
-        }
-
         #black board constants
         self._BLACK_BOARD_LENGTH = 755
         self._BLACK_BOARD_COORDINATES = (0, 10)
+        #image dictionaries
+        self._NEUTRAL_IMAGE_URL = {
+            "Board" : pygame.image.load('assets/images/chessboardCom.png')
+        }
+        #self._NEUTRAL_IMAGE_URL['Board'] = pygame.transform.scale(self._NEUTRAL_IMAGE_URL['Board'], (pLength, pLength))
+
+        self._PIECE_IMAGE_URL_RED = {
+            "Pawn" : pygame.image.load('assets/images/pawnRed.png'),
+            "Rook" : pygame.image.load('assets/images/rookRed.png')
+        }
+
+        self._PIECE_IMAGE_URL_PURPLE = {
+            "Pawn" : pygame.image.load('assets/images/pawnPurple.png'),
+            "Rook" : pygame.image.load('assets/images/rookPurple.png')
+        }
+
+        
 
     #==============================================
     #     Handeling adding and removing pieces
@@ -1079,11 +1081,11 @@ class Chessboard:
     #param: side length of chess board
     #param: tuple of x and y coord
     def drawBoardBlack(self, pLength, pCoords):
-        board =  pygame.image.load('assets/images/chessboardCom.png')
-        board = pygame.transform.scale(board, (pLength, pLength))
+        #board =  pygame.image.load('assets/images/chessboardCom.png')
+        board = pygame.transform.scale(self._NEUTRAL_IMAGE_URL['Board'], (pLength, pLength))
         self._screen.blit(board, pCoords)
         
-        piece = pygame.image.load('assets/images/pawnRed.png')
+        piece = None # pygame.image.load('assets/images/pawnRed.png')
         for i in range(8):
             for j in range(8):
                 if not self._matrix[i][j].hasChessPiece():
@@ -1099,9 +1101,9 @@ class Chessboard:
                     currDictionary = self._PIECE_IMAGE_URL_PURPLE
 
                 if isinstance(piece, Pawn):
-                    piece = pygame.image.load(currDictionary['Pawn'])
+                    piece = currDictionary['Pawn']
                 else:
-                    piece = pygame.image.load(currDictionary['Rook'])
+                    piece = currDictionary['Rook']
 
                 squareSize = pLength/8
 

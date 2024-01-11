@@ -1150,14 +1150,19 @@ class Chessboard:
                     print(event.dict['pos'])
                     withinBlackX = event.dict['pos'][0] > self._BLACK_BOARD_COORDINATES[0] and event.dict['pos'][0] < self._BLACK_BOARD_COORDINATES[0] + self._BLACK_BOARD_LENGTH
                     withinBlackY = event.dict['pos'][1] > self._BLACK_BOARD_COORDINATES[1] and event.dict['pos'][1] < self._BLACK_BOARD_COORDINATES[1] + self._BLACK_BOARD_LENGTH
+                    #if it's clicked on the blackboard, we get the square using black orientation
                     if withinBlackX and withinBlackY:
-                        print("board")
+                        rank = (event.dict['pos'][1] - self._BLACK_BOARD_COORDINATES[1])//(self._BLACK_BOARD_LENGTH//8)
+                        file = (event.dict['pos'][0] - self._BLACK_BOARD_COORDINATES[0])//(self._BLACK_BOARD_LENGTH//8)
+                        selectedSquare = self._matrix[rank][file]
+                        
+                        print("board", rank, file, selectedSquare.getLocation())
 
             #if there's no currently selected square, dont need to check for valid move
             if not selectedSquare:
                 continue
 
-            # first condition for early invalid
+            """# first condition for early invalid
             # if the first square doesnt have a piece, or if it doesnt match the turn
             if not firstSquare.hasChessPiece() or firstSquare.getChessPiece().getPieceAllegiance() != self._homeTurn:
                 continue
@@ -1187,7 +1192,7 @@ class Chessboard:
                             break
                 print("Invalid Input")
             else:
-                validInput = True
+                validInput = True"""
 
         if castle:
             #castle func

@@ -173,6 +173,7 @@ class Chessboard:
             self._boardHistory = []
 
         #constants
+        #image dictionaries
         self._NEUTRAL_IMAGE_URL = {
             "Board" : 'assets/images/chessboardCom.png'
         }
@@ -186,6 +187,10 @@ class Chessboard:
             "Pawn" : 'assets/images/pawnPurple.png',
             "Rook" : 'assets/images/rookPurple.png'
         }
+
+        #black board constants
+        self._BLACK_BOARD_LENGTH = 755
+        self._BLACK_BOARD_COORDINATES = (0, 10)
 
     #==============================================
     #     Handeling adding and removing pieces
@@ -1054,8 +1059,8 @@ class Chessboard:
 
             self.printBoard()
             self.printTeamValidMoves(self._homeTurn)
-            while True:
-                self.getPlayerMoveGraphic()
+            
+            self.getPlayerMoveGraphic()
 
             self._homeTurn = not self._homeTurn
 
@@ -1106,17 +1111,92 @@ class Chessboard:
 
     #
     def displayScreen(self):
-        self._screen.fill((14, 219, 248))
+        self._screen.fill((0,0,0))
+        #14, 219, 248)
 
-        self.drawBoardBlack(755, (0,10))
+        self.drawBoardBlack(self._BLACK_BOARD_LENGTH, self._BLACK_BOARD_COORDINATES)
 
         pygame.display.update()
 
     def getPlayerMoveGraphic(self):
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
+        selectedSquare = None
+        firstSquare = None
+        secondSquare = None
+
+        validInput = False
+        castle = None
+
+        while not validInput:
+            #input command in the form
+            #square 'to'
+            """
+            print("Give first square")
+            firstSquare = input()
+
+            print("Give second square")
+            secondSquare = input()
+
+            letterToFile = {'A' : 7, 'B' : 6, 'C' : 5, 'D' : 4, 'E' : 3, 'F' : 2, 'G' : 1, 'H' : 0} 
+
+            firstSquare = self._matrix[int(firstSquare[1])-1][letterToFile[firstSquare[0]]]
+            secondSquare = self._matrix[int(secondSquare[1])-1][letterToFile[secondSquare[0]]]
+            """
+            
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    print(event.dict['pos'])
+                    withinBlackX = event.dict['pos'][0] > self._BLACK_BOARD_COORDINATES[0] and event.dict['pos'][0] < self._BLACK_BOARD_COORDINATES[0] + self._BLACK_BOARD_LENGTH
+                    withinBlackY = event.dict['pos'][1] > self._BLACK_BOARD_COORDINATES[1] and event.dict['pos'][1] < self._BLACK_BOARD_COORDINATES[1] + self._BLACK_BOARD_LENGTH
+                    if withinBlackX and withinBlackY:
+                        print("board")
+
+            #if there's no currently selected square, dont need to check for valid move
+            if not selectedSquare:
+                continue
+
+            # first condition for early invalid
+            # if the first square doesnt have a piece, or if it doesnt match the turn
+            if not firstSquare.hasChessPiece() or firstSquare.getChessPiece().getPieceAllegiance() != self._homeTurn:
+                continue
+            #  or the pieces cant go to the second square
+            elif not secondSquare in firstSquare.getChessPiece().getValidMoves():
+                #caslte attempt if one is the king
+                if isinstance(firstSquare.getChessPiece(), King):
+                    #get the curr team
+                    team = None
+
+                    if self._homeTurn:
+                        team = self._homeTeam
+                    else:
+                        team = self._vistorTeam
+
+                    if secondSquare.getChessPiece() == team.getKingSideRook() or secondSquare == team.getKingSideRook().getKingDestination():
+                        if self.canCastle(team.getKingSideRook()):
+                            #castle
+                            castle = team.getKingSideRook()
+                            validInput = True
+                            break
+                    elif secondSquare.getChessPiece() == team.getQueenSideRook() or secondSquare == team.getQueenSideRook().getKingDestination():
+                        if self.canCastle(team.getKingSideRook()):
+                            #castle
+                            castle = team.getQueenSideRook()
+                            validInput = True
+                            break
+                print("Invalid Input")
+            else:
+                validInput = True
+
+        if castle:
+            #castle func
+            self.performCastle(castle, firstSquare.getChessPiece())
+        else:
+            self.playerMove(firstSquare, secondSquare)
+
+
+        
 
         
 

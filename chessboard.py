@@ -978,7 +978,7 @@ class Chessboard:
 
         movedPiece.increaseMoveCount()
 
-        #self.updateVisionAll()
+        self.updateVisionAll()
 
     #pre: the current rook and king CAN caslte, do not use this function unless tested using can Castle function externally
     #param: the rook that is being castled
@@ -997,7 +997,7 @@ class Chessboard:
         pKing.increaseMoveCount()
         pRook.increaseMoveCount()
 
-        #self.updateVisionAll()
+        self.updateVisionAll()
 
 
 
@@ -1053,12 +1053,12 @@ class Chessboard:
             
             print("White to Play" if self._homeTurn else "Black to Play")
 
-            self.displayScreen()
+            #self.displayScreen()
 
 
 
-            self.printBoard()
-            self.printTeamValidMoves(self._homeTurn)
+            #self.printBoard()
+            #self.printTeamValidMoves(self._homeTurn)
             
             self.getPlayerMoveGraphic()
 
@@ -1117,6 +1117,7 @@ class Chessboard:
         self.drawBoardBlack(self._BLACK_BOARD_LENGTH, self._BLACK_BOARD_COORDINATES)
 
         pygame.display.update()
+        self._clock.tick(60)
 
     def getPlayerMoveGraphic(self):
         selectedSquare = None
@@ -1136,6 +1137,7 @@ class Chessboard:
 
 
         while not validInput:
+            self.displayScreen()
             #input command in the form
             #square 'to'
             """
@@ -1170,11 +1172,10 @@ class Chessboard:
                             #if selected square is has a piece on the team
                             if selectedSquare.hasChessPiece() and selectedSquare.getChessPiece().getPieceAllegiance() == self._homeTurn:
                                 firstSquare = selectedSquare
-                            self.testFunction(selectedSquare, firstSquare, secondSquare, castle)
+                            #self.testFunction(selectedSquare, firstSquare, secondSquare, castle)
                         elif selectedSquare == firstSquare:
                             firstSquare = None
-                            print("tf")
-                            self.testFunction(selectedSquare, firstSquare, secondSquare, castle)
+                            #self.testFunction(selectedSquare, firstSquare, secondSquare, castle)
                         #everything after this assumes first square has a value
                         #so the first things to check for if the person is trying unselect, (picking an empty square), this is also 
                         #how u castle tho, so u must check for that as welll
@@ -1186,12 +1187,12 @@ class Chessboard:
                                 if selectedSquare in firstSquare.getChessPiece().getValidMoves():
                                     secondSquare = selectedSquare
                                     validInput = True
-                                    self.testFunction(selectedSquare, firstSquare, secondSquare, castle)
+                                    #self.testFunction(selectedSquare, firstSquare, secondSquare, castle)
                                     continue
 
                                 firstSquare = None
                                 secondSquare = None
-                                self.testFunction(selectedSquare, firstSquare, secondSquare, castle)
+                                #self.testFunction(selectedSquare, firstSquare, secondSquare, castle)
                                 continue
                             
                             #everything from this point assumes it's a king
@@ -1200,7 +1201,7 @@ class Chessboard:
                                     #castle
                                     castle = team.getKingSideRook()
                                     validInput = True
-                                    self.testFunction(selectedSquare, firstSquare, secondSquare, castle)
+                                    #self.testFunction(selectedSquare, firstSquare, secondSquare, castle)
                                     continue
                                 #secondSquare = team.getKingSideRook().getSquare()
 
@@ -1209,7 +1210,7 @@ class Chessboard:
                                     #castle
                                     castle = team.getQueenSideRook()
                                     validInput = True
-                                    self.testFunction(selectedSquare, firstSquare, secondSquare, castle)
+                                    #self.testFunction(selectedSquare, firstSquare, secondSquare, castle)
                                     continue
                                 
                                 #secondSquare = team.getQueenSideRook().getSquare()
@@ -1217,7 +1218,7 @@ class Chessboard:
 
                             firstSquare = None
                             secondSquare = None
-                            self.testFunction(selectedSquare, firstSquare, secondSquare, castle)
+                            #self.testFunction(selectedSquare, firstSquare, secondSquare, castle)
                             continue
 
                         elif selectedSquare.hasChessPiece():
@@ -1225,28 +1226,29 @@ class Chessboard:
 
                             if selectedSquare.getChessPiece().getPieceAllegiance() == self._homeTurn:
                                 firstSquare = selectedSquare
-                                self.testFunction(selectedSquare, firstSquare, secondSquare, castle)
+                                #self.testFunction(selectedSquare, firstSquare, secondSquare, castle)
                                 continue
 
                             if selectedSquare in firstSquare.getChessPiece().getValidMoves():
                                 secondSquare = selectedSquare
                                 validInput = True
-                                self.testFunction(selectedSquare, firstSquare, secondSquare, castle)
+                                #self.testFunction(selectedSquare, firstSquare, secondSquare, castle)
                                 continue
 
                             firstSquare = None
                             secondSquare = None
-                            self.testFunction(selectedSquare, firstSquare, secondSquare, castle)
+                            #self.testFunction(selectedSquare, firstSquare, secondSquare, castle)
                             continue
 
-
+        print("test speed")
         if castle:
             #castle func
             self.performCastle(castle, firstSquare.getChessPiece())
         else:
             self.playerMove(firstSquare, secondSquare)
-
+        print("vroomm")
         self.displayScreen()
+        print("skrrrrt")
 
 
     def testFunction(self, selectedSquare, firstSquare, secondSquare, castle):

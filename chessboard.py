@@ -1077,6 +1077,55 @@ class Chessboard:
             print("WHITE WINS" if winner == self._homeTeam else "BLACK WINS")
 
     #============================================================================================
+    # Handeling Pawn Properties(En Passant and Promotions)
+    #============================================================================================
+
+    #check if the pawn can en passant in the file 1 greater than it's current file(confusing since my matrix is kinda inverted
+    #now instead of just being named high, param will accept a boolean that indicates if is high or low
+    #[atleast when it's from blacks view, which im coding from rn]) so the high refers to higher lexigraphically D > A
+    #param: the pawn being checked if it can perform an en passant
+    #param: if it is to check higher or lower files
+    def canEnPassant(self, pPawn, pHigh):
+        #direction to be added to the file
+        direction = None
+        if pHigh:
+            direction = -1
+        else:
+            direction = 1
+        
+        #current square the pawn is on
+        currSquare = pPawn.getSquare()
+
+        #square that the enemy pawn would be if en passant would occur
+        squareEnemy = None
+
+        #square where the current pawn would go if en passant would occur
+        #squareDestination = None
+        #in hindsight, i removed that as we dont need this as if the enemy pawn jumped, this square would be empty so no need to check it again
+
+        if self.inBounds(currSquare.getRank(), currSquare.getFile() + direction):
+            squareEnemy = self._matrix[currSquare.getRank()][currSquare.getFile() + direction]
+            #squareEnemy = square.getLocation()
+        else: #if ur at the edge of the board, no empasant
+            return False
+        
+        #invert rules so we dont need to nest, rules : pawn adjacent, pawn just jumped
+
+        #if there's no piece false
+        if not squareEnemy.hasChessPiece():
+            return False
+        
+        #if there is a piece but not a pawn
+        if not isinstance(squareEnemy.getChessPiece(), Pawn):
+            return False
+        
+        #if it didnt just jump, return False
+        if len(self._boardHistory) - squareEnemy.getChessPiece().getJumpTime() > 1 :
+            return False
+
+        return True
+
+    #============================================================================================
     # Handeling drawing the baord
     #============================================================================================
 
@@ -1131,6 +1180,7 @@ class Chessboard:
 
         validInput = False
         castle = None
+        enPassant = None
 
         #get the curr team
         team = None
@@ -1195,6 +1245,33 @@ class Chessboard:
                                     #self.testFunction(selectedSquare, firstSquare, secondSquare, castle)
                                     continue
 
+                                #before we exit as they are selecting an empty square and we usually assume they are trying to deselect, 
+                                #we should look at if the first square is a pawn trying to en passant
+                                if isinstance(firstSquare.getChessPiece(), Pawn):
+                                    #we should find the direction the pawn is going to check where it's trying to empsant
+                                    direction = None
+                                    if self._homeTurn: direction = 1
+                                    else: direction = -1
+
+                                    #if the square is an empassant attempt 1: in the direction of pawn 1 ahead, 2: left or right
+                                    if selectedSquare.getRank() == firstSquare.getRank() + direction and abs(selectedSquare.getFile() - firstSquare.getFile()) == 1:
+                                        #use if to find out if higher or lower file
+                                        high = None
+                                        if firstSquare.getFile() > selectedSquare.getFile():
+                                            high = True
+                                        else: 
+                                            high = False
+
+                                        if self.canEnPassant(firstSquare.getChessPiece(), high):
+                                            print("oooo em passante check")
+                                            secondSquare = selectedSquare
+                                            if high: enPassant = self._matrix[firstSquare.getRank()][firstSquare.getFile() - 1]
+                                            else: enPassant = self._matrix[firstSquare.getRank()][firstSquare.getFile() + 1]
+                                            validInput = True
+                                            continue
+
+
+
                                 firstSquare = None
                                 secondSquare = None
                                 #self.testFunction(selectedSquare, firstSquare, secondSquare, castle)
@@ -1250,9 +1327,13 @@ class Chessboard:
         #we must track *when* a double jump occurs, to know if an en passant is viable
         
         #print("test speed")
+                        
         if castle:
             #castle func
             self.performCastle(castle, firstSquare.getChessPiece())
+        elif enPassant:
+            self.removePieceFromChessBoard(enPassant)
+            self.playerMove(firstSquare, secondSquare)
         else:
             if isinstance(firstSquare.getChessPiece(), Pawn):
                 if firstSquare.getChessPiece().getMoveCount() == 0 and secondSquare == firstSquare.getChessPiece().getJumpSquare():

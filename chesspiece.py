@@ -145,6 +145,7 @@ class Pawn(Chesspiece):
         self._pieceType = 'P'
         self._nextSquare = None
         self._jumpSquare = None
+        self._jumpTime = None
 
     #pawn needs these as it's movement + vision is strange, only being able to move to vision squares if it can take
     #only able to move forward if the next square is empty
@@ -164,6 +165,14 @@ class Pawn(Chesspiece):
     #param: reference to the square that the piece can jump to
     def setJumpSquare(self, pSquare):
         self._jumpSquare = pSquare
+
+    #return jump time member variable
+    def getJumpTime(self):
+        return self._jumpTime
+    
+    #param: int representing the time(length of history) t
+    def setJumpTime(self, pTime):
+        self._jumpTime = pTime
 
     #==============================================
     #prints(override this for pawn due to needing the front squares as well)

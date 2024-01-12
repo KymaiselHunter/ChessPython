@@ -1245,15 +1245,24 @@ class Chessboard:
                             #self.testFunction(selectedSquare, firstSquare, secondSquare, castle)
                             continue
 
-        print("test speed")
+        #the pawn needs special treatment here due to it's strange properties
+        #first property we must deal with is en passant
+        #we must track *when* a double jump occurs, to know if an en passant is viable
+        
+        #print("test speed")
         if castle:
             #castle func
             self.performCastle(castle, firstSquare.getChessPiece())
         else:
+            if isinstance(firstSquare.getChessPiece(), Pawn):
+                if firstSquare.getChessPiece().getMoveCount() == 0 and secondSquare == firstSquare.getChessPiece().getJumpSquare():
+                    firstSquare.getChessPiece().setJumpTime(len(self._boardHistory))
+                    #print("test", firstSquare.getChessPiece().getJumpTime())
+
             self.playerMove(firstSquare, secondSquare)
-        print("vroomm")
+        #print("vroomm")
         self.displayScreen()
-        print("skrrrrt")
+        #print("skrrrrt")
 
 
     def testFunction(self, selectedSquare, firstSquare, secondSquare, castle):

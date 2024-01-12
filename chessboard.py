@@ -1027,6 +1027,14 @@ class Chessboard:
         if self.canCastle(team.getQueenSideRook()):
             count += 1
 
+        pawnList = list(filter(lambda piece: isinstance(piece, Pawn), team.getPieceList()))
+
+        #print(pawnList)
+
+        for pawn in pawnList:
+            if self.canEnPassant(pawn, True): count += 1
+            if self.canEnPassant(pawn, False): count += 1
+
         if count > 0:
             return False
         
@@ -1115,8 +1123,12 @@ class Chessboard:
         if not squareEnemy.hasChessPiece():
             return False
         
-        #if there is a piece but not a pawn
-        if not isinstance(squareEnemy.getChessPiece(), Pawn):
+        #if there is a piece but not a pawn or it's on the same team
+        if not isinstance(squareEnemy.getChessPiece(), Pawn) or squareEnemy.getChessPiece().getPieceAllegiance() == pPawn.getPieceAllegiance():
+            return False
+        
+        #if the the pawn next to it never jumped
+        if not squareEnemy.getChessPiece().getJumpTime():
             return False
         
         #if it didnt just jump, return False

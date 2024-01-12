@@ -161,6 +161,27 @@ class Chessboard:
             self._screen = pygame.display.set_mode((1000, 800))
             self._clock = pygame.time.Clock()
 
+            #constants
+            #moved to within the if since the constants are only used for drawing, and when making future boards, it will cause frame rate errors
+            #black board constants
+            self._BLACK_BOARD_LENGTH = 755
+            self._BLACK_BOARD_COORDINATES = (0, 10)
+            #image dictionaries
+            self._NEUTRAL_IMAGE_URL = {
+                "Board" : pygame.image.load('assets/images/chessboardCom.png')
+            }
+            #self._NEUTRAL_IMAGE_URL['Board'] = pygame.transform.scale(self._NEUTRAL_IMAGE_URL['Board'], (pLength, pLength))
+
+            self._PIECE_IMAGE_URL_RED = {
+                "Pawn" : pygame.image.load('assets/images/pawnRed.png'),
+                "Rook" : pygame.image.load('assets/images/rookRed.png')
+            }
+
+            self._PIECE_IMAGE_URL_PURPLE = {
+                "Pawn" : pygame.image.load('assets/images/pawnPurple.png'),
+                "Rook" : pygame.image.load('assets/images/rookPurple.png')
+        }
+
         else:
             #if the parameters is a list with 4 elements, means that it's being used to calculate future moves
             #so all of the member variables will have values in the param constructor
@@ -172,25 +193,7 @@ class Chessboard:
 
             self._boardHistory = []
 
-        #constants
-        #black board constants
-        self._BLACK_BOARD_LENGTH = 755
-        self._BLACK_BOARD_COORDINATES = (0, 10)
-        #image dictionaries
-        self._NEUTRAL_IMAGE_URL = {
-            "Board" : pygame.image.load('assets/images/chessboardCom.png')
-        }
-        #self._NEUTRAL_IMAGE_URL['Board'] = pygame.transform.scale(self._NEUTRAL_IMAGE_URL['Board'], (pLength, pLength))
-
-        self._PIECE_IMAGE_URL_RED = {
-            "Pawn" : pygame.image.load('assets/images/pawnRed.png'),
-            "Rook" : pygame.image.load('assets/images/rookRed.png')
-        }
-
-        self._PIECE_IMAGE_URL_PURPLE = {
-            "Pawn" : pygame.image.load('assets/images/pawnPurple.png'),
-            "Rook" : pygame.image.load('assets/images/rookPurple.png')
-        }
+        
 
         
 

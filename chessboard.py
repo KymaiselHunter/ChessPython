@@ -1267,113 +1267,129 @@ class Chessboard:
                     sys.exit()
                 elif event.type == pygame.MOUSEBUTTONDOWN and event.dict['button'] == 1:
                     print(event.dict['pos'], event)
+                    #booleans for in black board
                     withinBlackX = event.dict['pos'][0] > self._BLACK_BOARD_COORDINATES[0] and event.dict['pos'][0] < self._BLACK_BOARD_COORDINATES[0] + self._BLACK_BOARD_LENGTH
                     withinBlackY = event.dict['pos'][1] > self._BLACK_BOARD_COORDINATES[1] and event.dict['pos'][1] < self._BLACK_BOARD_COORDINATES[1] + self._BLACK_BOARD_LENGTH
+
+                    #booleans for within white board
+                    withinWhiteX = event.dict['pos'][0] > self._WHITE_BOARD_COORDINATES[0] and event.dict['pos'][0] < self._WHITE_BOARD_COORDINATES[0] + self._WHITE_BOARD_LENGTH
+                    withinWhiteY = event.dict['pos'][1] > self._WHITE_BOARD_COORDINATES[1] and event.dict['pos'][1] < self._WHITE_BOARD_COORDINATES[1] + self._WHITE_BOARD_LENGTH
+
                     #if it's clicked on the blackboard, we get the square using black orientation
                     if withinBlackX and withinBlackY:
                         rank = (event.dict['pos'][1] - self._BLACK_BOARD_COORDINATES[1])//(self._BLACK_BOARD_LENGTH//8)
                         file = (event.dict['pos'][0] - self._BLACK_BOARD_COORDINATES[0])//(self._BLACK_BOARD_LENGTH//8)
                         selectedSquare = self._matrix[rank][file]
-                        
-                        #if there's no current first square, the selected square is immedietly that one
-                        if not firstSquare:
-                            #if selected square is has a piece on the team
-                            if selectedSquare.hasChessPiece() and selectedSquare.getChessPiece().getPieceAllegiance() == self._homeTurn:
-                                firstSquare = selectedSquare
-                            #self.testFunction(selectedSquare, firstSquare, secondSquare, castle)
-                        elif selectedSquare == firstSquare:
-                            firstSquare = None
-                            #self.testFunction(selectedSquare, firstSquare, secondSquare, castle)
-                        #everything after this assumes first square has a value
-                        #so the first things to check for if the person is trying unselect, (picking an empty square), this is also 
-                        #how u castle tho, so u must check for that as welll
-                        #we also have to see if they're trying to jump to an empty square
-                        elif not selectedSquare.hasChessPiece():
-                            #if the piece on the first square is a king, we may check for castle, else, it's an unselect
-                            #invert this idea for early exit
-                            if not isinstance(firstSquare.getChessPiece(), King):
-                                if selectedSquare in firstSquare.getChessPiece().getValidMoves():
-                                    secondSquare = selectedSquare
-                                    validInput = True
-                                    #self.testFunction(selectedSquare, firstSquare, secondSquare, castle)
-                                    continue
+                    #or if its on whiteboard
+                    elif withinWhiteX and withinWhiteY:
+                        rank = 7-(event.dict['pos'][1] - self._WHITE_BOARD_COORDINATES[1])//(self._WHITE_BOARD_LENGTH//8)
+                        file = 7-(event.dict['pos'][0] - self._WHITE_BOARD_COORDINATES[0])//(self._WHITE_BOARD_LENGTH//8)
+                        selectedSquare = self._matrix[rank][file]
+                     # if it's not on the black screen, white screen (and later the promotion) then deselect and continue
+                    else:
+                        firstSquare = None
+                        secondSquare = None
+                        continue
 
-                                #before we exit as they are selecting an empty square and we usually assume they are trying to deselect, 
-                                #we should look at if the first square is a pawn trying to en passant
-                                if isinstance(firstSquare.getChessPiece(), Pawn):
-                                    #we should find the direction the pawn is going to check where it's trying to empsant
-                                    direction = None
-                                    if self._homeTurn: direction = 1
-                                    else: direction = -1
-
-                                    #if the square is an empassant attempt 1: in the direction of pawn 1 ahead, 2: left or right
-                                    if selectedSquare.getRank() == firstSquare.getRank() + direction and abs(selectedSquare.getFile() - firstSquare.getFile()) == 1:
-                                        #use if to find out if higher or lower file
-                                        high = None
-                                        if firstSquare.getFile() > selectedSquare.getFile():
-                                            high = True
-                                        else: 
-                                            high = False
-
-                                        if self.canEnPassant(firstSquare.getChessPiece(), high):
-                                            print("oooo em passante check")
-                                            secondSquare = selectedSquare
-                                            if high: enPassant = self._matrix[firstSquare.getRank()][firstSquare.getFile() - 1]
-                                            else: enPassant = self._matrix[firstSquare.getRank()][firstSquare.getFile() + 1]
-                                            validInput = True
-                                            continue
-
-
-
-                                firstSquare = None
-                                secondSquare = None
-                                #self.testFunction(selectedSquare, firstSquare, secondSquare, castle)
-                                continue
-                            
-                            #everything from this point assumes it's a king
-                            if selectedSquare == team.getKingSideRook().getKingDestination():
-                                if self.canCastle(team.getKingSideRook()):
-                                    #castle
-                                    castle = team.getKingSideRook()
-                                    validInput = True
-                                    #self.testFunction(selectedSquare, firstSquare, secondSquare, castle)
-                                    continue
-                                #secondSquare = team.getKingSideRook().getSquare()
-
-                            if selectedSquare == team.getQueenSideRook().getKingDestination():
-                                if self.canCastle(team.getQueenSideRook()):
-                                    #castle
-                                    castle = team.getQueenSideRook()
-                                    validInput = True
-                                    #self.testFunction(selectedSquare, firstSquare, secondSquare, castle)
-                                    continue
-                                
-                                #secondSquare = team.getQueenSideRook().getSquare()
-
-
-                            firstSquare = None
-                            secondSquare = None
-                            #self.testFunction(selectedSquare, firstSquare, secondSquare, castle)
-                            continue
-
-                        elif selectedSquare.hasChessPiece():
-                            
-
-                            if selectedSquare.getChessPiece().getPieceAllegiance() == self._homeTurn:
-                                firstSquare = selectedSquare
-                                #self.testFunction(selectedSquare, firstSquare, secondSquare, castle)
-                                continue
-
+                    #if there's no current first square, the selected square is immedietly that one
+                    if not firstSquare:
+                        #if selected square is has a piece on the team
+                        if selectedSquare.hasChessPiece() and selectedSquare.getChessPiece().getPieceAllegiance() == self._homeTurn:
+                            firstSquare = selectedSquare
+                        #self.testFunction(selectedSquare, firstSquare, secondSquare, castle)
+                    elif selectedSquare == firstSquare:
+                        firstSquare = None
+                        #self.testFunction(selectedSquare, firstSquare, secondSquare, castle)
+                    #everything after this assumes first square has a value
+                    #so the first things to check for if the person is trying unselect, (picking an empty square), this is also 
+                    #how u castle tho, so u must check for that as welll
+                    #we also have to see if they're trying to jump to an empty square
+                    elif not selectedSquare.hasChessPiece():
+                        #if the piece on the first square is a king, we may check for castle, else, it's an unselect
+                        #invert this idea for early exit
+                        if not isinstance(firstSquare.getChessPiece(), King):
                             if selectedSquare in firstSquare.getChessPiece().getValidMoves():
                                 secondSquare = selectedSquare
                                 validInput = True
                                 #self.testFunction(selectedSquare, firstSquare, secondSquare, castle)
                                 continue
 
+                            #before we exit as they are selecting an empty square and we usually assume they are trying to deselect, 
+                            #we should look at if the first square is a pawn trying to en passant
+                            if isinstance(firstSquare.getChessPiece(), Pawn):
+                                #we should find the direction the pawn is going to check where it's trying to empsant
+                                direction = None
+                                if self._homeTurn: direction = 1
+                                else: direction = -1
+
+                                #if the square is an empassant attempt 1: in the direction of pawn 1 ahead, 2: left or right
+                                if selectedSquare.getRank() == firstSquare.getRank() + direction and abs(selectedSquare.getFile() - firstSquare.getFile()) == 1:
+                                    #use if to find out if higher or lower file
+                                    high = None
+                                    if firstSquare.getFile() > selectedSquare.getFile():
+                                        high = True
+                                    else: 
+                                        high = False
+
+                                    if self.canEnPassant(firstSquare.getChessPiece(), high):
+                                        print("oooo em passante check")
+                                        secondSquare = selectedSquare
+                                        if high: enPassant = self._matrix[firstSquare.getRank()][firstSquare.getFile() - 1]
+                                        else: enPassant = self._matrix[firstSquare.getRank()][firstSquare.getFile() + 1]
+                                        validInput = True
+                                        continue
+
+
+
                             firstSquare = None
                             secondSquare = None
                             #self.testFunction(selectedSquare, firstSquare, secondSquare, castle)
                             continue
+                        
+                        #everything from this point assumes it's a king
+                        if selectedSquare == team.getKingSideRook().getKingDestination():
+                            if self.canCastle(team.getKingSideRook()):
+                                #castle
+                                castle = team.getKingSideRook()
+                                validInput = True
+                                #self.testFunction(selectedSquare, firstSquare, secondSquare, castle)
+                                continue
+                            #secondSquare = team.getKingSideRook().getSquare()
+
+                        if selectedSquare == team.getQueenSideRook().getKingDestination():
+                            if self.canCastle(team.getQueenSideRook()):
+                                #castle
+                                castle = team.getQueenSideRook()
+                                validInput = True
+                                #self.testFunction(selectedSquare, firstSquare, secondSquare, castle)
+                                continue
+                            
+                            #secondSquare = team.getQueenSideRook().getSquare()
+
+
+                        firstSquare = None
+                        secondSquare = None
+                        #self.testFunction(selectedSquare, firstSquare, secondSquare, castle)
+                        continue
+
+                    elif selectedSquare.hasChessPiece():
+                        
+
+                        if selectedSquare.getChessPiece().getPieceAllegiance() == self._homeTurn:
+                            firstSquare = selectedSquare
+                            #self.testFunction(selectedSquare, firstSquare, secondSquare, castle)
+                            continue
+
+                        if selectedSquare in firstSquare.getChessPiece().getValidMoves():
+                            secondSquare = selectedSquare
+                            validInput = True
+                            #self.testFunction(selectedSquare, firstSquare, secondSquare, castle)
+                            continue
+
+                        firstSquare = None
+                        secondSquare = None
+                        #self.testFunction(selectedSquare, firstSquare, secondSquare, castle)
+                        continue
 
         #the pawn needs special treatment here due to it's strange properties
         #first property we must deal with is en passant

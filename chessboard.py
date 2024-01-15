@@ -158,18 +158,18 @@ class Chessboard:
             pygame.init()
 
             pygame.display.set_caption("Kyle's Chess in Python")
-            self._screen = pygame.display.set_mode((1560, 880))
+            self._screen = pygame.display.set_mode((1630, 880))
             self._clock = pygame.time.Clock()
 
             #constants
             #moved to within the if since the constants are only used for drawing, and when making future boards, it will cause frame rate errors
             #black board constants
-            self._BLACK_BOARD_LENGTH = 755
+            self._BLACK_BOARD_LENGTH = 800
             self._BLACK_BOARD_COORDINATES = (0, 10)
 
             #white board constants
-            self._WHITE_BOARD_LENGTH = 755
-            self._WHITE_BOARD_COORDINATES = (805, 10)
+            self._WHITE_BOARD_LENGTH = 800
+            self._WHITE_BOARD_COORDINATES = (830, 10)
             #self.drawBoardBlack(self._WHITE_BOARD_LENGTH, self._WHITE_BOARD_COORDINATES)
 
 

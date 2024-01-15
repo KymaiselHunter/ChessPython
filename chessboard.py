@@ -1265,8 +1265,8 @@ class Chessboard:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
-                elif event.type == pygame.MOUSEBUTTONDOWN:
-                    print(event.dict['pos'])
+                elif event.type == pygame.MOUSEBUTTONDOWN and event.dict['button'] == 1:
+                    print(event.dict['pos'], event)
                     withinBlackX = event.dict['pos'][0] > self._BLACK_BOARD_COORDINATES[0] and event.dict['pos'][0] < self._BLACK_BOARD_COORDINATES[0] + self._BLACK_BOARD_LENGTH
                     withinBlackY = event.dict['pos'][1] > self._BLACK_BOARD_COORDINATES[1] and event.dict['pos'][1] < self._BLACK_BOARD_COORDINATES[1] + self._BLACK_BOARD_LENGTH
                     #if it's clicked on the blackboard, we get the square using black orientation

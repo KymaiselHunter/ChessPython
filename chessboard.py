@@ -158,7 +158,7 @@ class Chessboard:
             pygame.init()
 
             pygame.display.set_caption("Kyle's Chess in Python")
-            self._screen = pygame.display.set_mode((1000, 800))
+            self._screen = pygame.display.set_mode((1560, 880))
             self._clock = pygame.time.Clock()
 
             #constants
@@ -166,6 +166,13 @@ class Chessboard:
             #black board constants
             self._BLACK_BOARD_LENGTH = 755
             self._BLACK_BOARD_COORDINATES = (0, 10)
+
+            #white board constants
+            self._WHITE_BOARD_LENGTH = 755
+            self._WHITE_BOARD_COORDINATES = (805, 10)
+            #self.drawBoardBlack(self._WHITE_BOARD_LENGTH, self._WHITE_BOARD_COORDINATES)
+
+
             #image dictionaries
             self._NEUTRAL_IMAGE_URL = {
                 "Board" : pygame.image.load('assets/images/chessboardCom.png')
@@ -1175,12 +1182,46 @@ class Chessboard:
                 self._screen.blit(piece, (squareSize*j + squareSize/16 + pCoords[0], squareSize*i + squareSize/16 + pCoords[1]))
                 
 
+    #draw the baord from whites's perspective
+    #param: side length of chess board
+    #param: tuple of x and y coord
+    def drawBoardWhite(self, pLength, pCoords):
+        #board =  pygame.image.load('assets/images/chessboardCom.png')
+        board = pygame.transform.scale(self._NEUTRAL_IMAGE_URL['Board'], (pLength, pLength))
+        self._screen.blit(board, pCoords)
+        
+        piece = None # pygame.image.load('assets/images/pawnRed.png')
+        for i in range(8):
+            for j in range(8):
+                if not self._matrix[i][j].hasChessPiece():
+                    continue
+                
+                
+                piece = self._matrix[i][j].getChessPiece()
+                
+                currDictionary = None
+                if piece.getPieceAllegiance():
+                    currDictionary = self._PIECE_IMAGE_URL_RED
+                else:
+                    currDictionary = self._PIECE_IMAGE_URL_PURPLE
+
+                if isinstance(piece, Pawn):
+                    piece = currDictionary['Pawn']
+                else:
+                    piece = currDictionary['Rook']
+
+                squareSize = pLength/8
+
+                piece = pygame.transform.scale(piece, ((squareSize/8) * 7, (squareSize/8) *7))
+                self._screen.blit(piece, (squareSize*(7-j) + squareSize/16 + pCoords[0], squareSize*(7-i) + squareSize/16 + pCoords[1]))
+
     #
     def displayScreen(self):
         self._screen.fill((0,0,0))
         #14, 219, 248)
 
         self.drawBoardBlack(self._BLACK_BOARD_LENGTH, self._BLACK_BOARD_COORDINATES)
+        self.drawBoardWhite(self._WHITE_BOARD_LENGTH, self._WHITE_BOARD_COORDINATES)
 
         pygame.display.update()
         self._clock.tick(60)

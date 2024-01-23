@@ -158,7 +158,7 @@ class Chessboard:
             pygame.init()
 
             pygame.display.set_caption("Kyle's Chess in Python")
-            self._screen = pygame.display.set_mode((1630, 880))
+            self._screen = pygame.display.set_mode((1030, 880))
             self._clock = pygame.time.Clock()
 
             #constants
@@ -168,8 +168,8 @@ class Chessboard:
             self._BLACK_BOARD_COORDINATES = (0, 10)
 
             #white board constants
-            self._WHITE_BOARD_LENGTH = 800
-            self._WHITE_BOARD_COORDINATES = (830, 10)
+            self._WHITE_BOARD_LENGTH = self._BLACK_BOARD_LENGTH
+            self._WHITE_BOARD_COORDINATES = self._BLACK_BOARD_COORDINATES
             #self.drawBoardBlack(self._WHITE_BOARD_LENGTH, self._WHITE_BOARD_COORDINATES)
 
 
@@ -1220,8 +1220,8 @@ class Chessboard:
         self._screen.fill((0,0,0))
         #14, 219, 248)
 
-        self.drawBoardBlack(self._BLACK_BOARD_LENGTH, self._BLACK_BOARD_COORDINATES)
-        self.drawBoardWhite(self._WHITE_BOARD_LENGTH, self._WHITE_BOARD_COORDINATES)
+        if not self._homeTurn: self.drawBoardBlack(self._BLACK_BOARD_LENGTH, self._BLACK_BOARD_COORDINATES)
+        else: self.drawBoardWhite(self._WHITE_BOARD_LENGTH, self._WHITE_BOARD_COORDINATES)
 
         pygame.display.update()
         self._clock.tick(60)
@@ -1275,18 +1275,21 @@ class Chessboard:
                     withinWhiteX = event.dict['pos'][0] > self._WHITE_BOARD_COORDINATES[0] and event.dict['pos'][0] < self._WHITE_BOARD_COORDINATES[0] + self._WHITE_BOARD_LENGTH
                     withinWhiteY = event.dict['pos'][1] > self._WHITE_BOARD_COORDINATES[1] and event.dict['pos'][1] < self._WHITE_BOARD_COORDINATES[1] + self._WHITE_BOARD_LENGTH
 
-                    #if it's clicked on the blackboard, we get the square using black orientation
-                    if withinBlackX and withinBlackY:
-                        rank = (event.dict['pos'][1] - self._BLACK_BOARD_COORDINATES[1])//(self._BLACK_BOARD_LENGTH//8)
-                        file = (event.dict['pos'][0] - self._BLACK_BOARD_COORDINATES[0])//(self._BLACK_BOARD_LENGTH//8)
-                        selectedSquare = self._matrix[rank][file]
-                    #or if its on whiteboard
-                    elif withinWhiteX and withinWhiteY:
-                        rank = 7-(event.dict['pos'][1] - self._WHITE_BOARD_COORDINATES[1])//(self._WHITE_BOARD_LENGTH//8)
-                        file = 7-(event.dict['pos'][0] - self._WHITE_BOARD_COORDINATES[0])//(self._WHITE_BOARD_LENGTH//8)
-                        selectedSquare = self._matrix[rank][file]
-                     # if it's not on the black screen, white screen (and later the promotion) then deselect and continue
+                    if not self._homeTurn:
+                        #if it's clicked on the blackboard, we get the square using black orientation
+                        if withinBlackX and withinBlackY:
+                            rank = (event.dict['pos'][1] - self._BLACK_BOARD_COORDINATES[1])//(self._BLACK_BOARD_LENGTH//8)
+                            file = (event.dict['pos'][0] - self._BLACK_BOARD_COORDINATES[0])//(self._BLACK_BOARD_LENGTH//8)
+                            selectedSquare = self._matrix[rank][file]
+                        #or if its on whiteboard
                     else:
+                        if withinWhiteX and withinWhiteY:
+                            rank = 7-(event.dict['pos'][1] - self._WHITE_BOARD_COORDINATES[1])//(self._WHITE_BOARD_LENGTH//8)
+                            file = 7-(event.dict['pos'][0] - self._WHITE_BOARD_COORDINATES[0])//(self._WHITE_BOARD_LENGTH//8)
+                            selectedSquare = self._matrix[rank][file]
+                    
+                    if not selectedSquare:
+                        # if it's not on the black screen, white screen (and later the promotion) then deselect and continue
                         firstSquare = None
                         secondSquare = None
                         continue

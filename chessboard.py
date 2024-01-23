@@ -181,13 +181,17 @@ class Chessboard:
 
             self._PIECE_IMAGE_URL_RED = {
                 "Pawn" : pygame.image.load('assets/images/pawnRed.png'),
-                "Rook" : pygame.image.load('assets/images/rookRed.png')
+                "Rook" : pygame.image.load('assets/images/rookRed.png'),
+                "Knight" : pygame.image.load('assets/images/knightRed.png'),
+                "Bishop" : pygame.image.load('assets/images/bishopRed.png')
             }
 
             self._PIECE_IMAGE_URL_PURPLE = {
                 "Pawn" : pygame.image.load('assets/images/pawnPurple.png'),
-                "Rook" : pygame.image.load('assets/images/rookPurple.png')
-        }
+                "Rook" : pygame.image.load('assets/images/rookPurple.png'),
+                "Knight" : pygame.image.load('assets/images/knightPurple.png'),
+                "Bishop" : pygame.image.load('assets/images/bishopPurple.png')
+            }
 
         else:
             #if the parameters is a list with 4 elements, means that it's being used to calculate future moves
@@ -1205,15 +1209,31 @@ class Chessboard:
                 else:
                     currDictionary = self._PIECE_IMAGE_URL_PURPLE
 
+                squareSize = pLength/8
+
                 if isinstance(piece, Pawn):
                     piece = currDictionary['Pawn']
+
+                    
+
+                    piece = pygame.transform.scale(piece, ((squareSize/8) * 7, (squareSize/8) *7))
+                    self._screen.blit(piece, (squareSize*(7-j) + squareSize/16 + pCoords[0], squareSize*(7-i) + squareSize/16 + pCoords[1]))
+
+                    continue
+
+                elif isinstance(piece, Knight):
+                    piece = currDictionary['Knight']
+
+                    
+                elif isinstance(piece, Bishop):
+                    piece = currDictionary['Bishop']
                 else:
                     piece = currDictionary['Rook']
 
-                squareSize = pLength/8
+                piece = pygame.transform.scale(piece, ((squareSize), (squareSize)))
+                self._screen.blit(piece, (squareSize*(7-j) + pCoords[0], squareSize*(7-i) + pCoords[1]))
 
-                piece = pygame.transform.scale(piece, ((squareSize/8) * 7, (squareSize/8) *7))
-                self._screen.blit(piece, (squareSize*(7-j) + squareSize/16 + pCoords[0], squareSize*(7-i) + squareSize/16 + pCoords[1]))
+                
 
     #
     def displayScreen(self):

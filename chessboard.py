@@ -1177,6 +1177,10 @@ class Chessboard:
 
                 if isinstance(piece, Pawn):
                     piece = currDictionary['Pawn']
+                elif isinstance(piece, Knight):
+                    piece = currDictionary['Knight']
+                elif isinstance(piece, Bishop):
+                    piece = currDictionary['Bishop']
                 else:
                     piece = currDictionary['Rook']
 

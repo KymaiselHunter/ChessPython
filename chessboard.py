@@ -183,14 +183,18 @@ class Chessboard:
                 "Pawn" : pygame.image.load('assets/images/pawnRed.png'),
                 "Rook" : pygame.image.load('assets/images/rookRed.png'),
                 "Knight" : pygame.image.load('assets/images/knightRed.png'),
-                "Bishop" : pygame.image.load('assets/images/bishopRed.png')
+                "Bishop" : pygame.image.load('assets/images/bishopRed.png'),
+                "Queen" : pygame.image.load('assets/images/queenRed.png'),
+                "King" : pygame.image.load('assets/images/kingRed.png')
             }
 
             self._PIECE_IMAGE_URL_PURPLE = {
                 "Pawn" : pygame.image.load('assets/images/pawnPurple.png'),
                 "Rook" : pygame.image.load('assets/images/rookPurple.png'),
                 "Knight" : pygame.image.load('assets/images/knightPurple.png'),
-                "Bishop" : pygame.image.load('assets/images/bishopPurple.png')
+                "Bishop" : pygame.image.load('assets/images/bishopPurple.png'),
+                "Queen" : pygame.image.load('assets/images/queenPurple.png'),
+                "King" : pygame.image.load('assets/images/kingPurple.png')
             }
 
         else:
@@ -1181,6 +1185,10 @@ class Chessboard:
                     piece = currDictionary['Knight']
                 elif isinstance(piece, Bishop):
                     piece = currDictionary['Bishop']
+                elif isinstance(piece, Queen):
+                    piece = currDictionary['Queen']
+                elif isinstance(piece, King):
+                    piece = currDictionary['King']
                 else:
                     piece = currDictionary['Rook']
 
@@ -1231,6 +1239,10 @@ class Chessboard:
                     
                 elif isinstance(piece, Bishop):
                     piece = currDictionary['Bishop']
+                elif isinstance(piece, Queen):
+                    piece = currDictionary['Queen']
+                elif isinstance(piece, King):
+                    piece = currDictionary['King']
                 else:
                     piece = currDictionary['Rook']
 

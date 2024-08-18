@@ -65,13 +65,22 @@ class Chessboard:
                 "Board" : pygame.image.load('assets/images/chessboardCom.png')
             }
             
+            self._isSimpleArt = True
+
             self._PIECE_IMAGE_URL_RED = {
                 "Pawn" : pygame.image.load('assets/images/pawnRed.png'),
                 "Rook" : pygame.image.load('assets/images/rookRed.png'),
                 "Knight" : pygame.image.load('assets/images/knightRed.png'),
                 "Bishop" : pygame.image.load('assets/images/bishopRed.png'),
                 "Queen" : pygame.image.load('assets/images/queenRed.png'),
-                "King" : pygame.image.load('assets/images/kingRed.png')
+                "King" : pygame.image.load('assets/images/kingRed.png'),
+                
+                "PawnSimp" : pygame.image.load('assets/images/pawnRedSimp.png'),
+                "RookSimp" : pygame.image.load('assets/images/rookRedSimp.png'),
+                "KnightSimp" : pygame.image.load('assets/images/knightRedSimp.png'),
+                "BishopSimp" : pygame.image.load('assets/images/bishopRedSimp.png'),
+                "QueenSimp" : pygame.image.load('assets/images/queenRedSimp.png'),
+                "KingSimp" : pygame.image.load('assets/images/kingRedSimp.png')
             }
 
             self._PIECE_IMAGE_URL_PURPLE = {
@@ -80,7 +89,14 @@ class Chessboard:
                 "Knight" : pygame.image.load('assets/images/knightPurple.png'),
                 "Bishop" : pygame.image.load('assets/images/bishopPurple.png'),
                 "Queen" : pygame.image.load('assets/images/queenPurple.png'),
-                "King" : pygame.image.load('assets/images/kingPurple.png')
+                "King" : pygame.image.load('assets/images/kingPurple.png'),
+
+                "PawnSimp" : pygame.image.load('assets/images/pawnPurpleSimp.png'),
+                "RookSimp" : pygame.image.load('assets/images/rookPurpleSimp.png'),
+                "KnightSimp" : pygame.image.load('assets/images/knightPurpleSimp.png'),
+                "BishopSimp" : pygame.image.load('assets/images/bishopPurpleSimp.png'),
+                "QueenSimp" : pygame.image.load('assets/images/queenPurpleSimp.png'),
+                "KingSimp" : pygame.image.load('assets/images/kingPurpleSimp.png')
             }
 
         else:
@@ -1033,17 +1049,17 @@ class Chessboard:
                     currDictionary = self._PIECE_IMAGE_URL_PURPLE
 
                 if isinstance(piece, Pawn):
-                    piece = currDictionary['Pawn']
+                    piece = currDictionary[('Pawn' if not self._isSimpleArt else 'PawnSimp')]
                 elif isinstance(piece, Knight):
-                    piece = currDictionary['Knight']
+                    piece = currDictionary[('Knight' if not self._isSimpleArt else 'KnightSimp')]
                 elif isinstance(piece, Bishop):
-                    piece = currDictionary['Bishop']
+                    piece = currDictionary[('Bishop' if not self._isSimpleArt else 'BishopSimp')]
                 elif isinstance(piece, Queen):
-                    piece = currDictionary['Queen']
+                    piece = currDictionary[('Queen' if not self._isSimpleArt else 'QueenSimp')]
                 elif isinstance(piece, King):
-                    piece = currDictionary['King']
+                    piece = currDictionary[('King' if not self._isSimpleArt else 'KingSimp')]
                 else:
-                    piece = currDictionary['Rook']
+                    piece = currDictionary[('Rook' if not self._isSimpleArt else 'RookSimp')]
 
                 squareSize = pLength/8
 
@@ -1077,27 +1093,24 @@ class Chessboard:
                 squareSize = pLength/8
 
                 if isinstance(piece, Pawn):
-                    piece = currDictionary['Pawn']
-
+                    piece = currDictionary[('Pawn' if not self._isSimpleArt else 'PawnSimp')]
+                    
                     
 
                     piece = pygame.transform.scale(piece, ((squareSize/8) * 7, (squareSize/8) *7))
                     self._screen.blit(piece, (squareSize*(7-j) + squareSize/16 + pCoords[0], squareSize*(7-i) + squareSize/16 + pCoords[1]))
 
                     continue
-
                 elif isinstance(piece, Knight):
-                    piece = currDictionary['Knight']
-
-                    
+                    piece = currDictionary[('Knight' if not self._isSimpleArt else 'KnightSimp')]
                 elif isinstance(piece, Bishop):
-                    piece = currDictionary['Bishop']
+                    piece = currDictionary[('Bishop' if not self._isSimpleArt else 'BishopSimp')]
                 elif isinstance(piece, Queen):
-                    piece = currDictionary['Queen']
+                    piece = currDictionary[('Queen' if not self._isSimpleArt else 'QueenSimp')]
                 elif isinstance(piece, King):
-                    piece = currDictionary['King']
+                    piece = currDictionary[('King' if not self._isSimpleArt else 'KingSimp')]
                 else:
-                    piece = currDictionary['Rook']
+                    piece = currDictionary[('Rook' if not self._isSimpleArt else 'RookSimp')]
 
                 piece = pygame.transform.scale(piece, ((squareSize), (squareSize)))
                 self._screen.blit(piece, (squareSize*(7-j) + pCoords[0], squareSize*(7-i) + pCoords[1]))

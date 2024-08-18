@@ -58,15 +58,13 @@ class Chessboard:
             #white board constants
             self._WHITE_BOARD_LENGTH = self._BLACK_BOARD_LENGTH
             self._WHITE_BOARD_COORDINATES = self._BLACK_BOARD_COORDINATES
-            #self.drawBoardBlack(self._WHITE_BOARD_LENGTH, self._WHITE_BOARD_COORDINATES)
 
 
             #image dictionaries
             self._NEUTRAL_IMAGE_URL = {
                 "Board" : pygame.image.load('assets/images/chessboardCom.png')
             }
-            #self._NEUTRAL_IMAGE_URL['Board'] = pygame.transform.scale(self._NEUTRAL_IMAGE_URL['Board'], (pLength, pLength))
-
+            
             self._PIECE_IMAGE_URL_RED = {
                 "Pawn" : pygame.image.load('assets/images/pawnRed.png'),
                 "Rook" : pygame.image.load('assets/images/rookRed.png'),
@@ -230,7 +228,6 @@ class Chessboard:
 
                 while self.inBounds(currRank, currFile) and not block:
                     visionSquare = self._matrix[currRank][currFile]
-                    #print("Rook on", pRook.getSquareLocation(), visionSquare.getLocation(), visionSquare.hasChessPiece())
                     if visionSquare.hasChessPiece():
                         block = True
 
@@ -287,10 +284,8 @@ class Chessboard:
                 currFile = currentSquare.getFile() + y
 
                 #check once, no while loop since the king can only move 1 square
-
                 if self.inBounds(currRank, currFile):
                     visionSquare = self._matrix[currRank][currFile]
-                    #print("Bishop on", pBishop.getSquareLocation(), visionSquare.getLocation(), visionSquare.hasChessPiece())
 
                     pKing.addSquareToVision(visionSquare)
 
@@ -343,8 +338,6 @@ class Chessboard:
             #if the square infront of it has not piece and the pawn hasnt moved, it can see it's jumpable square and it's inBounds
             if pPawn.getMoveCount() == 0 and not nextSquare.hasChessPiece() and self.inBounds(currRank+direction, currFile):
                 pPawn.setJumpSquare(self._matrix[currRank + direction][currFile])
-                #print(pPawn.getMoveCount() == 0 and not nextSquare.hasChessPiece() and self.inBounds(currRank+direction, currFile))
-
 
         #now we do it's vision
         if self.inBounds(currRank, currFile - 1):
@@ -458,25 +451,6 @@ class Chessboard:
 
         #now that the board is setup and at the start, start the history
         self.addToHistory()
-
-    #============================================================================================
-    # Test Functions (Remove Later)
-    #============================================================================================
-
-    #test function to purely test other functions by changing the board
-    def testFunc(self):
-        self.removePieceFromChessBoard(self._matrix[1][3])
-        self.addPieceToChessBoard(Queen(False), self._matrix[5][3])
-
-    #test function to purely test other functions by changing the board
-    def testFunc2(self):
-        #self.removePieceFromChessBoard(self._matrix[1][3])
-        self.addPieceToChessBoard(Knight(False), self._matrix[2][2])
-
-    def testFunc3(self):
-        self.removePieceFromChessBoard(self._matrix[1][2])
-        self.addPieceToChessBoard(Queen(False), self._matrix[3][0])
-        self.addPieceToChessBoard(Knight(True), self._matrix[5][2])
             
     #============================================================================================
     # Prints
@@ -932,8 +906,6 @@ class Chessboard:
 
         pawnList = list(filter(lambda piece: isinstance(piece, Pawn), team.getPieceList()))
 
-        #print(pawnList)
-
         for pawn in pawnList:
             if self.canEnPassant(pawn, True): count += 1
             if self.canEnPassant(pawn, False): count += 1
@@ -968,13 +940,6 @@ class Chessboard:
 
             
             print("White to Play" if self._homeTurn else "Black to Play")
-
-            #self.displayScreen()
-
-
-
-            #self.printBoard()
-            #self.printTeamValidMoves(self._homeTurn)
             
             self.getPlayerMoveGraphic()
 
@@ -1172,18 +1137,6 @@ class Chessboard:
             self.displayScreen()
             #input command in the form
             #square 'to'
-            """
-            print("Give first square")
-            firstSquare = input()
-
-            print("Give second square")
-            secondSquare = input()
-
-            letterToFile = {'A' : 7, 'B' : 6, 'C' : 5, 'D' : 4, 'E' : 3, 'F' : 2, 'G' : 1, 'H' : 0} 
-
-            firstSquare = self._matrix[int(firstSquare[1])-1][letterToFile[firstSquare[0]]]
-            secondSquare = self._matrix[int(secondSquare[1])-1][letterToFile[secondSquare[0]]]
-            """
             
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -1322,7 +1275,6 @@ class Chessboard:
         #first property we must deal with is en passant
         #we must track *when* a double jump occurs, to know if an en passant is viable
         
-        #print("test speed")
                         
         if castle:
             #castle func
@@ -1334,12 +1286,9 @@ class Chessboard:
             if isinstance(firstSquare.getChessPiece(), Pawn):
                 if firstSquare.getChessPiece().getMoveCount() == 0 and secondSquare == firstSquare.getChessPiece().getJumpSquare():
                     firstSquare.getChessPiece().setJumpTime(len(self._boardHistory))
-                    #print("test", firstSquare.getChessPiece().getJumpTime())
 
             self.playerMove(firstSquare, secondSquare)
-        #print("vroomm")
         self.displayScreen()
-        #print("skrrrrt")
 
 
     def testFunction(self, selectedSquare, firstSquare, secondSquare, castle):

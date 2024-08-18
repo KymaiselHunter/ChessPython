@@ -1,4 +1,4 @@
-# Chess Engine
+# Chess in Python!
 
 ## Overview
 Welcome to the Chess Engine project! This repository contains a chess engine built in Python, featuring both a text-based and a graphical interface using `pygame`. The project is structured around object-oriented principles, making it modular and extensible. The chessboard, pieces, and game logic are implemented as classes, allowing for easy modification and expansion.
@@ -43,6 +43,8 @@ The main file `main.py` includes:
 
 ## Future Development
 - **Enhanced Graphics**: Improving the `pygame` interface with better graphics and animations.
+- **Castle Bug Fix**: TODO: Fix bug where King cannot move after performing a Castle
+- **Pawn Promotion**: I forgot to implement pawn promotion, I have to implment this later.
 - **Undo/Redo Feature**: Adding functionality to undo and redo moves.
 ## Far Future Development
 - **AI Opponent**: Implementing an AI opponent using Minimax or other algorithms.

@@ -1030,7 +1030,7 @@ class Chessboard:
     #param: tuple of x and y coord
     def drawBoardBlack(self, pLength, pCoords):
         #board =  pygame.image.load('assets/images/chessboardCom.png')
-        board = pygame.transform.scale(self._NEUTRAL_IMAGE_URL['Board'], (pLength, pLength))
+        board = pygame.transform.smoothscale(self._NEUTRAL_IMAGE_URL['Board'], (pLength, pLength))
         self._screen.blit(board, pCoords)
         
         piece = None # pygame.image.load('assets/images/pawnRed.png')
@@ -1063,7 +1063,7 @@ class Chessboard:
 
                 squareSize = pLength/8
 
-                piece = pygame.transform.scale(piece, ((squareSize/8) * 7, (squareSize/8) *7))
+                piece = pygame.transform.smoothscale(piece, ((squareSize/8) * 7, (squareSize/8) *7))
                 self._screen.blit(piece, (squareSize*j + squareSize/16 + pCoords[0], squareSize*i + squareSize/16 + pCoords[1]))
                 
 
@@ -1072,7 +1072,7 @@ class Chessboard:
     #param: tuple of x and y coord
     def drawBoardWhite(self, pLength, pCoords):
         #board =  pygame.image.load('assets/images/chessboardCom.png')
-        board = pygame.transform.scale(self._NEUTRAL_IMAGE_URL['Board'], (pLength, pLength))
+        board = pygame.transform.smoothscale(self._NEUTRAL_IMAGE_URL['Board'], (pLength, pLength))
         self._screen.blit(board, pCoords)
         
         piece = None # pygame.image.load('assets/images/pawnRed.png')
@@ -1097,7 +1097,7 @@ class Chessboard:
                     
                     
 
-                    piece = pygame.transform.scale(piece, ((squareSize/8) * 7, (squareSize/8) *7))
+                    piece = pygame.transform.smoothscale(piece, ((squareSize/8) * 7, (squareSize/8) *7))
                     self._screen.blit(piece, (squareSize*(7-j) + squareSize/16 + pCoords[0], squareSize*(7-i) + squareSize/16 + pCoords[1]))
 
                     continue
@@ -1112,7 +1112,7 @@ class Chessboard:
                 else:
                     piece = currDictionary[('Rook' if not self._isSimpleArt else 'RookSimp')]
 
-                piece = pygame.transform.scale(piece, ((squareSize), (squareSize)))
+                piece = pygame.transform.smoothscale(piece, ((squareSize), (squareSize)))
                 self._screen.blit(piece, (squareSize*(7-j) + pCoords[0], squareSize*(7-i) + pCoords[1]))
 
                 

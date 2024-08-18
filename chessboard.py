@@ -6,6 +6,9 @@ from chesspiece import Bishop
 from chesspiece import Queen
 from chesspiece import King
 
+from sqaure import Square
+from team import Team
+
 #copy will be used for a version control of the board itself
 import copy
 
@@ -13,121 +16,6 @@ import copy
 import sys
 
 import pygame
-
-
-#============================================================================================
-#     Square class
-#============================================================================================
-#each Chessboard needs 64 squares, each sqaure can be empty or have a piece
-class Square:
-    #constructor, will make the square have no piece, but will indicate it's location on the board using rank and file as x and y
-    def __init__(self, pRank, pFile):
-        self._ChessPiece = None
-        self._rank = pRank
-        self._file = pFile
-
-    #getter
-    #return: returns true if the square has a chesspiece on it, false if not
-    def hasChessPiece(self):
-        if isinstance(self._ChessPiece, Chesspiece):
-            return True
-
-        return False
-    
-    #return: returns the chesspiece member variable itself
-    def getChessPiece(self):
-        return self._ChessPiece
-    
-    #return the square's rank
-    def getRank(self):
-        return self._rank
-    
-    #return the square's file
-    def getFile(self):
-        return self._file
-    
-    #return: the location of the piece as a string, using the square object, in file-rank form (A6)
-    def getLocation(self):
-        letters = ['A','B','C','D','E','F','G','H']
-
-        #add 1 to the rank since cs index'ing starts at 0
-        output = "" + letters[7-self.getFile()] + str(self.getRank()+1)
-
-        return output
-    
-    #setter
-    #sets the chesspiece on the square to passed in chess piece in the parameter
-    def setChessPiece(self, pChessPiece):
-        self._ChessPiece = pChessPiece
-
-    #removes the chess piece on the square and makes the member variable false
-    def removeChessPiece(self):
-        self._ChessPiece = None
-
-
-#============================================================================================
-#     Team class
-#============================================================================================
-#a chessboard HAS TWO teams
-class Team:
-    def __init__(self):
-        #list of pieces
-        self._pieceList = []
-
-        #variable to keep track if it's in check
-        self._check = False
-
-        #rook member variables so we can instanly access castleability when printing it
-        self._kingSideRook = None
-        self._queenSideRook = None
-
-    #getters
-    #return: the list of pieces 
-    def getPieceList(self):
-        return self._pieceList
-    
-    #return: the _check member variable that indicates if this team is in check
-    def inCheck(self):
-        return self._check
-    
-    #return: the amount of valid squares a team has
-    def getAmountOfValidMoves(self):
-        count = 0
-        for piece in self._pieceList:
-            count += piece.getAmountOfValidMoves()
-
-        return count
-    
-    #return: king side rook
-    def getKingSideRook(self):
-        return self._kingSideRook
-    
-    #return: queen side rook
-    def getQueenSideRook(self):
-        return self._queenSideRook
-
-    #setters
-    #post: set the _check variable equal to pCheck
-    def setCheck(self, pCheck):
-        self._check = pCheck
-
-    #param: piece that will be added to the pieceList
-    #post: adds the piece to the list
-    def addPieceToTeam(self, pChessPiece):
-        self._pieceList.append(pChessPiece)
-
-    #param: piece that will be removed from the pieceList
-    #post: removes the piece from the piece lists
-    def removePieceFromTeam(self, pChessPiece):
-        self._pieceList.remove(pChessPiece)
-
-    #post: set the _kingSideRook
-    def setKingSideRook(self, pRook):
-        self._kingSideRook = pRook
-
-    #post: set the _queenSideRook
-    def setQueenSideRook(self, pRook):
-        self._queenSideRook = pRook
 
 
 
@@ -158,14 +46,14 @@ class Chessboard:
             pygame.init()
 
             pygame.display.set_caption("Kyle's Chess in Python")
-            self._screen = pygame.display.set_mode((1030, 880))
+            self._screen = pygame.display.set_mode((800, 800))
             self._clock = pygame.time.Clock()
 
             #constants
             #moved to within the if since the constants are only used for drawing, and when making future boards, it will cause frame rate errors
             #black board constants
             self._BLACK_BOARD_LENGTH = 800
-            self._BLACK_BOARD_COORDINATES = (0, 10)
+            self._BLACK_BOARD_COORDINATES = (0, 0)
 
             #white board constants
             self._WHITE_BOARD_LENGTH = self._BLACK_BOARD_LENGTH

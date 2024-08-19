@@ -1189,6 +1189,7 @@ class Chessboard:
                         #if selected square is has a piece on the team
                         if selectedSquare.hasChessPiece() and selectedSquare.getChessPiece().getPieceAllegiance() == self._homeTurn:
                             firstSquare = selectedSquare
+                            print(firstSquare.getChessPiece().getValidMovesLocations())
                         #self.testFunction(selectedSquare, firstSquare, secondSquare, castle)
                     elif selectedSquare == firstSquare:
                         firstSquare = None
@@ -1257,7 +1258,11 @@ class Chessboard:
                                 #self.testFunction(selectedSquare, firstSquare, secondSquare, castle)
                                 continue
                             
-                            #secondSquare = team.getQueenSideRook().getSquare()
+                        if selectedSquare in firstSquare.getChessPiece().getValidMoves():
+                            secondSquare = selectedSquare
+                            validInput = True
+                            #self.testFunction(selectedSquare, firstSquare, secondSquare, castle)
+                            continue
 
 
                         firstSquare = None

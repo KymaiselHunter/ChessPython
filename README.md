@@ -43,7 +43,6 @@ The main file `main.py` includes:
 
 ## Future Development
 - **Enhanced Graphics**: Improving the `pygame` interface with better graphics and animations.
-- **Castle Bug Fix**: TODO: Fix bug where King cannot move after performing a Castle
 - **Pawn Promotion**: I forgot to implement pawn promotion, I have to implment this later.
 - **Undo/Redo Feature**: Adding functionality to undo and redo moves.
 ## Far Future Development

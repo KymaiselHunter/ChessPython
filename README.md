@@ -30,6 +30,10 @@ The graphical interface (playGameGraphic) provides an interactive way to play ch
    python main.py
    ```
 
+## Gameplay
+
+![Blank chessboard](./descriptionImages/descriptionImg1.png)
+
 ## Code Overview
 
 The main file `main.py` includes:

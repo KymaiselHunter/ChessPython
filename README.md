@@ -30,6 +30,12 @@ The graphical interface (playGameGraphic) provides an interactive way to play ch
    python main.py
    ```
 
+## Gameplay
+
+![Red Moves First](./descriptionImages/descriptionImg1.png)
+![Purple Moves Second](./descriptionImages/descriptionImg2.png)
+![The Game Is Played](./descriptionImages/descriptionImg3.png)
+
 ## Code Overview
 
 The main file `main.py` includes:

@@ -32,7 +32,9 @@ The graphical interface (playGameGraphic) provides an interactive way to play ch
 
 ## Gameplay
 
-![Blank chessboard](./descriptionImages/descriptionImg1.png)
+![Red Moves First](./descriptionImages/descriptionImg1.png)
+![Purple Moves Second](./descriptionImages/descriptionImg2.png)
+![The Game Is Played](./descriptionImages/descriptionImg3.png)
 
 ## Code Overview
 
